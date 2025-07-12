@@ -1,0 +1,12 @@
+NAME="PageOS"
+PRETTY_NAME="PageOS"
+ID=pageos
+ID-LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://pageos.js.org/"
+DOCUMENTATION_URL="https://github.com/swaybien/pageos/docs/"
+SUPPORT_URL="https://github.com/swaybien/pageos/"
+BUG_REPORT_URL="https://github.com/swaybien/pageos/issues"
+PRIVACY_POLICY_URL="https://github.com/swaybien/pageos/docs/"
+LOGO=pageos-logo

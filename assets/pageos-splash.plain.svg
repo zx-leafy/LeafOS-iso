@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="640"
+   height="480"
+   viewBox="0 0 169.33333 127"
+   version="1.1"
+   id="svg1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient2">
+      <stop
+         style="stop-color:#525252;stop-opacity:1;"
+         offset="0"
+         id="stop2" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="1"
+         id="stop3" />
+    </linearGradient>
+    <rect
+       x="26.257771"
+       y="32.822212"
+       width="510.71365"
+       height="242.88437"
+       id="rect2" />
+    <radialGradient
+       xlink:href="#linearGradient2"
+       id="radialGradient3"
+       cx="71.566505"
+       cy="11.279083"
+       fx="71.566505"
+       fy="11.279083"
+       r="85.724998"
+       gradientTransform="matrix(1.2607004,-0.35127498,0.30217352,1.0844788,-19.370323,41.670754)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1">
+    <rect
+       style="fill:url(#radialGradient3);fill-opacity:1;stroke-width:0.26588"
+       id="rect1"
+       width="171.45"
+       height="127"
+       x="0"
+       y="-2.220446e-16" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-0.59737947,-4.2340225)"
+       id="text1"
+       style="font-size:72px;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#0e0e0e;fill-opacity:1"><tspan
+         x="26.257812"
+         y="97.458629"
+         id="tspan3"><tspan
+           style="font-family:'Maple Mono NF CN';-inkscape-font-specification:'Maple Mono NF CN';fill:#fefefe"
+           id="tspan1">󱞒 PageOS</tspan></tspan></text>
+  </g>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:License
+         rdf:about="http://artlibre.org/licence/lal">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+      </cc:License>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://artlibre.org/licence/lal" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>PJ568</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

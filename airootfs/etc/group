@@ -1,0 +1,16 @@
+root:x:0:root
+sys:x:3:bin,pageos
+network:x:90:pageos
+power:x:98:pageos
+adm:x:999:pageos
+wheel:x:998:pageos
+uucp:x:987:pageos
+optical:x:990:pageos
+rfkill:x:983:pageos
+video:x:986:pageos
+storage:x:988:pageos
+audio:x:995:pageos
+users:x:985:pageos
+nopasswdlogin:x:966:pageos
+autologin:x:967:pageos
+pageos:x:1000:
