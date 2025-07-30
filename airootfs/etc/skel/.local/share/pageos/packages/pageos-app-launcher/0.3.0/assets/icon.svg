@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 外层圆环 -->
+  <circle cx="50" cy="50" r="45" fill="#558B2F" stroke="#33691E" stroke-width="6"/>
+  
+  <!-- 内层白色圆环 -->
+  <circle cx="50" cy="50" r="32" fill="#F1F8E9"/>
+  
+  <!-- 应用启动器图标元素 -->
+  <g transform="translate(50,60)">
+    <!-- 应用网格 -->
+    <rect x="-11" y="-11" width="10" height="10" fill="#26A69A"/>
+    <rect x="1" y="-11" width="10" height="10" fill="#26A69A"/>
+    <rect x="-11" y="-23" width="10" height="10" fill="#26A69A"/>
+    <rect x="1" y="-21" width="8" height="8" fill="#26A69A"/>
+  </g>
+</svg>

@@ -1,0 +1,21 @@
+cache_dir = "/tmp/pageos-pkgr/cache"
+
+[[source]]
+id = "pageos-pages"
+name = "PageOS Github Pages 仓库"
+# 仓库根 URL，必须以 / 结尾
+url = "https://swaybien.github.io/pageos-apps/"
+# 是否启用此源 (默认: true)
+enabled = true
+# 是否强制使用 HTTPS (默认: true)
+require_https = true
+
+[[source]]
+id = "pageos-official"
+name = "PageOS 官方仓库"
+# 仓库根 URL，必须以 / 结尾
+url = "https://pageos-apps.pages.dev/"
+# 是否启用此源 (默认: true)
+enabled = true
+# 是否强制使用 HTTPS (默认: true)
+require_https = true

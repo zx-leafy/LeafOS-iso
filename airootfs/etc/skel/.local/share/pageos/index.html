@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PageOS 应用程序包仓库</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+"
+    />
+    <style>
+      /* 全局样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+        color: var(--secondary-font-color);
+        transition: all 0.2s ease;
+      }
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+      body {
+        font-family: "Maple Mono CN", "Courier New", Courier, monospace;
+        background: #424242;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --danger-color: #ff6d00; /* 着重色：边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+        --focused-bg-color: rgba(255, 255, 255, 0.1);
+      }
+      .container {
+        padding: var(--margin-padding);
+        flex: 1;
+        overflow-y: auto;
+      }
+      .info-container {
+        max-height: 40%;
+        overflow: hidden;
+        overflow-y: scroll;
+        & > * {
+          background: var(--secondary-bg-color);
+          border: var(--border-thickness) solid var(--secondary-color);
+          border-radius: var(--border-radius);
+          padding: var(--margin-padding);
+          margin: var(--margin-padding);
+          &:hover {
+            box-shadow: var(--shadow);
+            --secondary-font-color: var(--accent-font-color);
+            --secondary-color: var(--accent-color);
+          }
+          a {
+            text-decoration: underline;
+          }
+          h2 {
+            color: var(--accent-color);
+            margin-bottom: var(--margin-padding);
+          }
+          h3 {
+            color: var(--accent-color);
+            margin-bottom: var(--margin-padding);
+            margin-top: var(--margin-padding);
+          }
+          p {
+            margin-bottom: var(--margin-padding);
+          }
+          ul {
+            margin-left: calc(2 * var(--margin-padding));
+            margin-bottom: var(--margin-padding);
+          }
+        }
+      }
+      /* 搜索栏样式 */
+      .search-container {
+        display: flex;
+        gap: var(--margin-padding);
+        background: var(--secondary-bg-color);
+        padding: var(--margin-padding);
+        border-top: var(--border-thickness) solid var(--secondary-color);
+        border-bottom: var(--border-thickness) solid var(--secondary-color);
+        &:hover {
+          border-top: var(--border-thickness) solid var(--accent-color);
+          border-bottom: var(--border-thickness) solid var(--accent-color);
+          box-shadow: 0rem -0.6rem 1.2rem rgba(0, 0, 0, 0.2),
+            0rem 0.6rem 1.2rem rgba(0, 0, 0, 0.2);
+        }
+      }
+      .search-box {
+        flex: 1;
+        padding: var(--margin-padding);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--margin-padding);
+        background: var(--content-bg-color);
+        font-size: 1rem;
+      }
+      .search-box:focus {
+        --secondary-bg-color: var(--accent-bg-color);
+        --secondary-font-color: var(--accent-font-color);
+        --secondary-color: var(--accent-color);
+      }
+      .top-buttons {
+        display: flex;
+        border: var(--border-thickness) solid var(--secondary-color);
+        padding: var(--margin-padding);
+        border-radius: var(--margin-padding);
+        background: var(--content-bg-color);
+        position: relative;
+      }
+      /* 应用程序网格样式 */
+      .apps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: calc(2 * var(--margin-padding));
+        padding: var(--margin-padding) 0;
+      }
+      .app-card {
+        background: var(--secondary-bg-color);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--margin-padding);
+        padding: var(--margin-padding);
+        text-align: center;
+        cursor: pointer;
+
+        & > * {
+          pointer-events: none;
+        }
+      }
+      a:hover,
+      button:hover {
+        border-color: var(--accent-color);
+      }
+      .app-card:hover {
+        border-color: var(--accent-color);
+        transform: scale(1.1);
+        box-shadow: var(--shadow);
+
+        .app-name {
+          white-space: initial;
+        }
+      }
+      /* 图标样式 */
+      .app-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 0.5rem;
+        background: var(--content-bg-color);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+      }
+      /* 应用程序信息样式 */
+      .app-name {
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .app-author {
+        font-size: 0.8rem;
+        color: #b0b0b0;
+      }
+      /* 加载状态 */
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        font-style: italic;
+      }
+
+      /* 翻译按钮相关 */
+      .translateSelectLanguage {
+        background: inherit;
+        color: inherit;
+        opacity: 0;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+    <script
+      src="https://lib.baomitu.com/translate.js/3.17.0/translate.js"
+      type="text/javascript"
+    ></script>
+  </head>
+  <body>
+    <div class="info-container">
+      <div>
+        <h2> PageOS - 基于 Arch Linux 的 Web-Centric 操作系统 </h2>
+        <p>
+          <a href="https://github.com/swaybien/pageos" target="_blank">
+            PageOS
+          </a>
+          是一款革命性的 Linux 发行版，将整个操作系统体验转化为现代化的 Web
+          界面。通过创新的架构设计，<a
+            href="https://github.com/swaybien/pageos"
+            target="_blank"
+          >
+            PageOS
+          </a>
+          让用户通过浏览器即可完成所有系统操作，同时保持传统 Linux
+          应用的兼容性。
+        </p>
+        <h3>核心理念</h3>
+        <ul>
+          <li>
+            <strong>Web-Centric 架构</strong>：整个用户界面由
+            HTML/CSS/JavaScript 实现，运行在 Firefox kiosk 模式中
+          </li>
+          <li>
+            <strong>系统即服务</strong>：通过 Rust 编写的后台服务提供完整的系统
+            API
+          </li>
+          <li>
+            <strong>混合应用生态</strong>：同时支持 Web 应用和传统 Linux 应用
+          </li>
+          <li> <strong>轻量高效</strong>：基于 Arch Linux 和 Wayland 合成器</li>
+        </ul>
+        <i> 颠覆传统的操作系统体验 - 一切皆在浏览器中实现 </i>
+      </div>
+    </div>
+    <div class="search-container">
+      <input
+        type="text"
+        class="search-box"
+        placeholder="搜索应用程序……"
+        id="searchInput"
+      />
+      <a id="translate" class="top-buttons language-selector" title="语言">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-world"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+          <path d="M3.6 9h16.8" />
+          <path d="M3.6 15h16.8" />
+          <path d="M11.5 3a17 17 0 0 0 0 18" />
+          <path d="M12.5 3a17 17 0 0 1 0 18" /></svg
+      ></a>
+      <a
+        href="https://github.com/swaybien/pageos-apps"
+        target="_blank"
+        class="top-buttons"
+        title="仓库"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-brand-git"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M16 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M12 8m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M12 15v-6" />
+          <path d="M15 11l-2 -2" />
+          <path d="M11 7l-1.9 -1.9" />
+          <path
+            d="M13.446 2.6l7.955 7.954a2.045 2.045 0 0 1 0 2.892l-7.955 7.955a2.045 2.045 0 0 1 -2.892 0l-7.955 -7.955a2.045 2.045 0 0 1 0 -2.892l7.955 -7.955a2.045 2.045 0 0 1 2.892 0z"
+          /></svg
+      ></a>
+    </div>
+    <div class="container">
+      <div class="apps-grid" id="appsGrid">
+        <div class="loading">加载中……</div>
+      </div>
+    </div>
+
+    <script src="lib/pinyinjs/pinyin_dict_withtone.js"></script>
+    <script src="lib/pinyinjs/pinyinUtil.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const appsGrid = document.getElementById("appsGrid");
+        const searchInput = document.getElementById("searchInput");
+        let packages = [];
+
+        // 加载应用程序数据
+        async function loadPackages() {
+          try {
+            const response = await fetch("index.json");
+            const data = await response.json();
+            packages = (data.packages || []).map((pkg) => ({
+              ...pkg,
+              pinyin: pinyinUtil.getPinyin(pkg.name, "", false), // 添加拼音字段
+            }));
+            renderApps(packages);
+          } catch (error) {
+            appsGrid.innerHTML = `<div class="loading">加载失败: ${error.message}</div>`;
+          }
+        }
+
+        // 渲染应用程序列表
+        function renderApps(appList) {
+          if (appList.length === 0) {
+            appsGrid.innerHTML =
+              '<div class="loading">未找到匹配的应用程序</div>';
+            translate.execute([appsGrid]);
+            return;
+          }
+
+          appsGrid.innerHTML = appList
+            .map((pkg) => {
+              // 处理图标显示
+              let iconContent = "";
+              if (pkg.icon) {
+                // 如果有图标 URL，使用 img 标签
+                iconContent = `<img src="${pkg.location}/${pkg.icon}" alt="${
+                  pkg.name || pkg.id
+                }" style="width:100%;height:100%;object-fit:contain;">`;
+              } else {
+                // 如果没有图标，显示名称首字符
+                iconContent = pkg.name.charAt(0).toUpperCase();
+              }
+
+              return `
+              <button data-href="${
+                pkg.location
+              }/metadata.json" class="app-card" title="${
+                pkg.description || pkg.name || pkg.id
+              }" target="_blank" data-meta-entry='${pkg.entry}' data-meta-id='${
+                pkg.id
+              }' data-menu-options='${JSON.stringify([
+                { label: "启动应用程序", action: "execute" }, // 新标签页打开 href 指向的 metadata.json 中的 entry 指向的文件
+                { label: "查看元信息 ", action: "metadata" }, // 新标签页打开 href 指向的 metadata.json
+                { label: "复制固定启动地址", action: "cpcmd" }, // 复制和本页面同目录的 exec.html?id=“软件包 ID”
+                { label: "复制启动地址", action: "cpexec" }, // 复制 href 指向的 metadata.json 中的 entry 指向的文件地址
+                { label: "复制元文件地址", action: "cpmeta" }, // 复制 href 指向的 metadata.json 的地址
+              ])}'>
+                <div class="app-icon">${iconContent}</div>
+                <div class="app-name">${pkg.name || pkg.id}</div>
+                <div class="app-author">作者: ${pkg.author}</div>
+              </button>`;
+            })
+            .join("");
+          translate.execute([appsGrid]);
+        }
+
+        // 搜索功能 - 已添加防抖
+        let searchTimeout = null;
+        searchInput.addEventListener("input", () => {
+          // 清除之前的定时器
+          if (searchTimeout) {
+            clearTimeout(searchTimeout);
+          }
+
+          const query = searchInput.value.toLowerCase().trim();
+          if (!query) {
+            renderApps(packages);
+            return;
+          }
+
+          // 设置新的定时器，延迟执行搜索
+          searchTimeout = setTimeout(() => {
+            const filtered = packages.filter(
+              (pkg) =>
+                pkg.name.toLowerCase().includes(query) ||
+                (pkg.pinyin && pkg.pinyin.includes(query)) || // 支持拼音搜索
+                pkg.author.toLowerCase().includes(query) ||
+                (pkg.description &&
+                  pkg.description.toLowerCase().includes(query)) ||
+                pkg.id.toLowerCase().includes(query)
+            );
+            renderApps(filtered);
+          }, 300); // 300ms 防抖延迟
+        });
+
+        // 初始化
+        await loadPackages();
+      });
+
+      // 自定义右键菜单功能
+      function initOptionMenu(doc) {
+        // 隐藏菜单后，将菜单移动到屏幕内
+        function inScreen(contextMenu) {
+          contextMenu.style.left = "2px";
+          contextMenu.style.top = "2px";
+        }
+
+        // 初始化样式
+        var style = doc.createElement("style");
+        style.type = "text/css";
+        style.innerHTML = `
+    #custom-context-menu {
+      transition: all 0.2s ease;
+      --accent-color: #64ffda; /* 强调色：边框 */
+      --secondary-color: #00695c; /* 次要色：未激活边框 */
+      --danger-color: #ff6d00; /* 着重色：边框 */
+      --accent-bg-color: #009688;
+      --secondary-bg-color: #616161;
+      --content-bg-color: #424242;
+      --accent-font-color: #f5f5f5;
+      --secondary-font-color: #eeeeee;
+
+      --margin-padding: 0.5rem;
+      --border-thickness: 0.2rem;
+      --border-radius: 0.5rem;
+      --title-bar-height: 2rem;
+      --title-bar-justify-content: left;
+      --task-bar-height: 3rem;
+
+      --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+      --focused-bg-color: rgba(255, 255, 255, 0.1);
+
+      font-size: small;
+      user-select: none;
+      position: absolute;
+      background-color: var(--content-bg-color);
+      border: var(--border-thickness) solid var(--secondary-color);
+      border-radius: var(--border-radius);
+      padding: 0;
+      opacity: 0;
+      transform: scale(0.8);
+      pointer-events: none;
+      z-index: 4000; /* 确保在顶层 */
+      min-width: 150px;
+
+      &.show {
+        display: block;
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+      }
+
+      &:hover {
+        box-shadow: var(--shadow);
+        --secondary-color: var(--accent-color);
+      }
+    }
+
+    #custom-context-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #custom-context-menu li {
+      padding: var(--margin-padding);
+      cursor: pointer;
+      list-style-type: none; /* 去除列表项标记 */
+    }
+
+    #custom-context-menu li:hover {
+      background-color: var(--focused-bg-color);
+    }`;
+        style.id = "addStyle";
+        doc.getElementsByTagName("HEAD").item(0).appendChild(style);
+
+        // 初始化元素
+        const contextMenu = doc.createElement("ul");
+        contextMenu.id = "custom-context-menu";
+        doc.body.appendChild(contextMenu);
+
+        function f(e) {
+          // 阻止默认右键菜单
+          e.preventDefault();
+
+          // 获取被点击的元素
+          const target = e.target;
+          const selection = window.getSelection();
+          const hasSelection =
+            selection && selection.toString().trim().length > 0;
+
+          // 检查事件目标是否在选区内
+          let inSelection = false;
+          if (hasSelection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            inSelection = range.intersectsNode(e.target);
+          }
+
+          // 如果有文本被选中且右键点击在选区内，显示默认文本操作菜单
+          if (hasSelection && inSelection) {
+            const defaultTextOptions = [
+              { label: "复制", action: "copy" },
+              { label: "剪切", action: "cut" },
+              { label: "粘贴", action: "paste" },
+              { label: "全选", action: "selectAll" },
+            ];
+
+            // 清空菜单
+            contextMenu.innerHTML = "";
+            // 生成菜单项
+            defaultTextOptions.forEach((option) => {
+              const li = doc.createElement("li");
+              li.textContent = option.label;
+              li.onclick = function () {
+                if (option.action === "copy") {
+                  doc.execCommand("copy");
+                } else if (option.action === "cut") {
+                  doc.execCommand("cut");
+                } else if (option.action === "paste") {
+                  doc.execCommand("paste");
+                } else if (option.action === "selectAll") {
+                  doc.execCommand("selectAll");
+                }
+                contextMenu.classList.remove("show");
+                inScreen(contextMenu);
+              };
+              contextMenu.appendChild(li);
+            });
+
+            // 显示菜单（确保在屏幕内）
+            translate.execute([contextMenu]);
+            contextMenu.classList.add("show");
+
+            // 获取菜单尺寸
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+
+            // 计算调整后的位置
+            let adjustedLeft = e.pageX;
+            let adjustedTop = e.pageY;
+
+            // 如果靠近右边缘，向左偏移
+            if (window.innerWidth - e.pageX < menuWidth) {
+              adjustedLeft = e.pageX - menuWidth;
+            }
+
+            // 如果靠近下边缘，向上偏移
+            if (window.innerHeight - e.pageY < menuHeight) {
+              adjustedTop = e.pageY - menuHeight;
+            }
+
+            contextMenu.style.left = adjustedLeft + "px";
+            contextMenu.style.top = adjustedTop + "px";
+          }
+          // 否则检查元素的 data-menu-options 属性
+          else if (target.dataset.menuOptions) {
+            try {
+              // 解析JSON字符串
+              const menuOptions = JSON.parse(target.dataset.menuOptions);
+              // 清空菜单
+              contextMenu.innerHTML = "";
+              // 动态生成菜单项
+              menuOptions.forEach((option) => {
+                const li = doc.createElement("li");
+                li.textContent = option.label;
+                li.onclick = function () {
+                  // 执行action
+                  if (option.action) {
+                    // 触发自定义事件
+                    const event = new CustomEvent("custom-contextmenu-action", {
+                      detail: {
+                        action: option.action,
+                        target: target,
+                      },
+                    });
+                    doc.dispatchEvent(event);
+                  }
+                  // 隐藏菜单
+                  contextMenu.classList.remove("show");
+                  inScreen(contextMenu);
+                };
+                contextMenu.appendChild(li);
+              });
+
+              // 显示菜单（确保在屏幕内）
+              translate.execute([contextMenu]);
+              contextMenu.classList.add("show");
+
+              // 获取菜单尺寸
+              const menuWidth = contextMenu.offsetWidth;
+              const menuHeight = contextMenu.offsetHeight;
+
+              // 计算调整后的位置
+              let adjustedLeft = e.pageX;
+              let adjustedTop = e.pageY;
+
+              // 如果靠近右边缘，向左偏移
+              if (window.innerWidth - e.pageX < menuWidth) {
+                adjustedLeft = e.pageX - menuWidth;
+              }
+
+              // 如果靠近下边缘，向上偏移
+              if (window.innerHeight - e.pageY < menuHeight) {
+                adjustedTop = e.pageY - menuHeight;
+              }
+
+              contextMenu.style.left = adjustedLeft + "px";
+              contextMenu.style.top = adjustedTop + "px";
+            } catch (error) {
+              console.error("解析菜单选项失败", error);
+            }
+          } else {
+            // 如果没有定义菜单选项，则隐藏菜单
+            contextMenu.classList.remove("show");
+            inScreen(contextMenu);
+          }
+        }
+
+        // 监听全局右键点击事件
+        doc.addEventListener("contextmenu", function (e) {
+          f(e);
+        });
+
+        // 监听全局左键点击事件，点击其他地方隐藏菜单
+        doc.addEventListener("click", function (e) {
+          if (e.target.closest("button.app-card")) {
+            f(e);
+          } else {
+            contextMenu.classList.remove("show");
+            inScreen(contextMenu);
+          }
+        });
+
+        // 阻止菜单内部的点击事件冒泡
+        contextMenu.addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
+      }
+
+      // 处理右键菜单动作
+      document.addEventListener("custom-contextmenu-action", function (e) {
+        const { action, target } = e.detail;
+        const metadataUrl = target.dataset.href;
+
+        // 获取 metadata.json 内容
+        async function getMetadata() {
+          try {
+            const response = await fetch(metadataUrl);
+            return await response.json();
+          } catch (error) {
+            console.error("获取 metadata.json 失败:", error);
+            return null;
+          }
+        }
+
+        if (action === "execute") {
+          // 启动应用程序：新标签页打开 metadata.json 中的 entry 指向的文件
+          getMetadata().then((metadata) => {
+            if (metadata && metadata.entry) {
+              const entryUrl = new URL(
+                metadata.entry,
+                new URL(metadataUrl, window.location.href).href
+              ).href;
+              window.open(entryUrl, "_blank");
+            }
+          });
+        } else if (action === "metadata") {
+          // 查看元信息：新标签页打开 metadata.json
+          window.open(metadataUrl, "_blank");
+        } else if (action === "cpcmd") {
+          // 复制固定启动地址：复制和本页面同目录的 exec.html?id=“软件包 ID”
+          const execUrl = new URL(`exec.html?id=${target.dataset.metaId}`, window.location.href).href;
+          navigator.clipboard.writeText(execUrl).catch((err) => {
+            console.error("复制失败:", err);
+          });
+        } else if (action === "cpexec") {
+          // 复制启动地址：复制 metadata.json 中的 entry 指向的文件地址
+          getMetadata().then((metadata) => {
+            if (metadata && metadata.entry) {
+              const entryUrl = new URL(
+                metadata.entry,
+                new URL(metadataUrl, window.location.href).href
+              ).href;
+              navigator.clipboard.writeText(entryUrl).catch((err) => {
+                console.error("复制失败:", err);
+              });
+            }
+          });
+        } else if (action === "cpmeta") {
+          // 复制元文件地址：复制 metadata.json 的地址
+          navigator.clipboard.writeText(metadataUrl).catch((err) => {
+            console.error("复制失败:", err);
+          });
+        }
+      });
+
+      initOptionMenu(document);
+
+      // 加载 CSS
+      function loadCSS(url) {
+        return new Promise((resolve, reject) => {
+          //// 检查是否已加载
+          const existingLinks = document.querySelectorAll(
+            `link[href="${url}"]`
+          );
+          if (existingLinks.length > 0) {
+            return resolve(url);
+          }
+
+          //// 创建新的 link 元素
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.type = "text/css";
+          link.href = url;
+
+          //// 成功加载处理
+          link.onload = () => {
+            link.onload = null;
+            link.onerror = null;
+            resolve(url);
+          };
+
+          //// 加载失败处理
+          link.onerror = () => {
+            link.onerror = null;
+            link.onload = null;
+            document.head.removeChild(link);
+            reject(new Error(`无法加载 CSS 文件: ${url}`));
+          };
+
+          //// 添加到文档头部
+          document.head.appendChild(link);
+        });
+      }
+
+      // translate-js 翻译系统
+      //// 初始化翻译系统
+      function initTranslate() {
+        try {
+          translate.service.use("client.edge");
+          translate.request.listener.start();
+          translate.setAutoDiscriminateLocalLanguage();
+          translate.language.setUrlParamControl();
+          translate.ignore.class.push("notTranslate");
+          translate.execute();
+        } catch (e) {
+          console.error("翻译系统出错：" + e);
+        }
+      }
+
+      //// 刷新翻译
+      function refreshTranslate() {
+        try {
+          translate.selectLanguageTag.refreshRender();
+        } catch (e) {
+          console.error("刷新翻译出错：" + e);
+        }
+      }
+
+      // 初始化
+      function initialize() {
+        initTranslate(); //// 初始化页面翻译
+        loadCSS(
+          "https://chinese-fonts-cdn.deno.dev/packages/maple-mono-cn/dist/MapleMono-CN-Regular/result.css"
+        ); //// 加载字体 CSS
+      }
+
+      // 触发器
+      //// 网页加载完毕后触发初始化
+      window.addEventListener("DOMContentLoaded", () => initialize());
+    </script>
+  </body>
+</html>

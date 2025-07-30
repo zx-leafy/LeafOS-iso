@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PageOS 用户桌面</title>
+    <style>
+      /* 全局 */
+      * {
+        color: var(--secondary-font-color);
+        font-family: "Maple Mono CN", "Courier New", Courier, monospace;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+      }
+
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+
+      :root,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --danger-color: #ff6d00; /* 着重色：边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --title-bar-height: 2rem;
+        --title-bar-justify-content: left;
+        --task-bar-height: 3rem;
+
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+        --focused-bg-color: rgba(255, 255, 255, 0.1);
+
+        --favicon: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+");
+      }
+
+      button {
+        background-color: var(--secondary-bg-color);
+        background-position: center;
+        background-repeat: no-repeat;
+        border: none;
+        display: flex;
+        align-self: center;
+        justify-content: center;
+
+        &:hover,
+        &:focus {
+          background-color: var(--focused-bg-color);
+        }
+      }
+
+      .warning,
+      .error {
+        color: var(--danger-color);
+      }
+    </style>
+    <style>
+      /* 窗口样式 */
+      #windows-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .window {
+        color: var(--secondary-font-color);
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        background: var(--content-bg-color);
+        box-sizing: border-box;
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        pointer-events: auto;
+
+        &.dragging {
+          transition: left 0s, right 0s;
+        }
+
+        &.resizing {
+          transition: width 0s, height 0s;
+        }
+
+        &.focused {
+          --secondary-font-color: var(--accent-font-color);
+          --secondary-color: var(--accent-color);
+          box-shadow: var(--shadow);
+        }
+
+        &.dragging,
+        &.resizing {
+          --secondary-color: var(--danger-color);
+
+          iframe {
+            display: none;
+          }
+        }
+
+        &.borderless {
+          border: none;
+          .window-title-bar {
+            height: 0;
+            display: none;
+          }
+        }
+
+        &.minimized {
+          /* max-height: var(--title-bar-height); */
+          opacity: 0;
+          transform: scale(0.8);
+          pointer-events: none;
+        }
+
+        &.fullscreen {
+          top: 0 !important;
+          left: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+          border: none !important;
+          border-radius: 0;
+          box-shadow: none !important;
+        }
+
+        &.borderless,
+        &.fullscreen {
+          .resize-handle {
+            display: none;
+          }
+        }
+
+        .resize-handle {
+          border-radius: calc(0.5 * var(--border-radius)) 0 0 0;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: calc(2 * var(--border-thickness));
+          height: calc(2 * var(--border-thickness));
+          background: var(--secondary-color);
+          cursor: nwse-resize;
+        }
+      }
+
+      .window-title-bar {
+        height: var(--title-bar-height);
+        background: var(--accent-bg-color);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        cursor: move;
+        user-select: none;
+        white-space: nowrap;
+
+        & > *:first-child {
+          margin: 0 var(--margin-padding);
+          min-width: calc(var(--title-bar-height) - var(--margin-padding));
+        }
+      }
+
+      .window-title {
+        flex: 1;
+        justify-content: var(--title-bar-justify-content);
+        font-weight: bold;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .window-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > * {
+          pointer-events: none;
+        }
+      }
+
+      .window-controls {
+        display: flex;
+        flex-shrink: 0;
+      }
+
+      .window-controls button {
+        color: var(--secondary-font-color);
+        background: none;
+        border: none;
+        width: var(--title-bar-height);
+        height: var(--title-bar-height);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > * {
+          pointer-events: none;
+        }
+        &:hover,
+        &:focus {
+          background: var(--focused-bg-color);
+        }
+        &.close:hover,
+        &.close:focus {
+          background-color: var(--danger-color);
+        }
+      }
+
+      .window-tab-bar {
+        display: flex;
+        background: var(--content-bg-color);
+      }
+
+      .tab {
+        font-size: small;
+        padding: var(--margin-padding);
+        cursor: pointer;
+        border-bottom: var(--border-thickness) solid transparent;
+        user-select: none;
+        &:hover {
+          background: var(--focused-bg-color);
+        }
+        &.active {
+          background: var(--secondary-bg-color);
+          border-bottom: var(--border-thickness) solid var(--secondary-color);
+        }
+      }
+
+      .window-content {
+        flex: 1;
+        overflow: auto;
+        display: flex;
+
+        .tab-content {
+          flex: 1;
+          display: none;
+          padding: var(--margin-padding);
+
+          &.active {
+            display: flex;
+            flex-direction: column;
+            gap: var(--margin-padding);
+          }
+        }
+      }
+    </style>
+    <style>
+      /* 背景 */
+      bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+        background: url("assets/pageos_文字壁纸.svg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+    </style>
+    <style>
+      /* 任务栏 */
+      taskbar-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--margin-padding); /* 底部触发区域高度 */
+        z-index: 3100; /* 确保任务栏始终在最顶层 */
+        pointer-events: auto;
+
+        &:hover {
+          height: var(--task-bar-height);
+        }
+
+        &:hover task-bar {
+          bottom: var(--margin-padding);
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+
+      task-bar {
+        position: absolute;
+        background-color: var(--content-bg-color);
+        border-radius: var(--border-radius);
+        border: var(--border-thickness) solid var(--secondary-color);
+        bottom: var(--margin-padding);
+        height: var(--task-bar-height);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+        max-width: 1024px;
+        overflow: hidden;
+
+        &.hide {
+          bottom: calc(var(--task-bar-height) * -1);
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        &:hover {
+          box-shadow: var(--shadow);
+          --secondary-color: var(--accent-color);
+          --secondary-font-color: var(--accent-font-color);
+        }
+
+        & > *:first-child {
+          border-left: none;
+        }
+
+        & > * {
+          height: 100%;
+          border-left: var(--border-thickness) solid var(--secondary-color);
+          min-width: var(--task-bar-height);
+          display: flex;
+          overflow: hidden;
+          overflow-x: scroll;
+
+          & > * {
+            cursor: pointer;
+            padding: var(--margin-padding);
+            height: 100%;
+            min-width: var(--task-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: calc(var(--border-radius) - var(--margin-padding));
+            background-color: var(--content-bg-color);
+          }
+        }
+      }
+
+      window-buttons {
+        flex: 1;
+
+        & > * {
+          border-top: var(--border-thickness) solid transparent;
+          border-bottom: var(--border-thickness) solid transparent;
+          font-size: large;
+
+          & > * {
+            pointer-events: none;
+          }
+        }
+
+        & > *.focused {
+          border-bottom: var(--border-thickness) solid var(--accent-color);
+        }
+      }
+
+      bar-space > * {
+        font-size: larger;
+      }
+
+      .app-launcher {
+        background-image: var(--favicon);
+      }
+
+      .power {
+        display: none;
+      }
+
+      #translate {
+        position: relative;
+
+        .translateSelectLanguage {
+          background-color: var(--content-bg-color);
+          color: inherit;
+          opacity: 0;
+          cursor: pointer;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+
+          & > * {
+            border: var(--border-thickness) solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--content-bg-color);
+            color: inherit;
+          }
+        }
+      }
+    </style>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+"
+    />
+    <script
+      src="https://lib.baomitu.com/translate.js/3.17.0/translate.js"
+      type="text/javascript"
+    ></script>
+  </head>
+  <body>
+    <bg></bg>
+    <div id="windows-container"></div>
+    <taskbar-container>
+      <task-bar>
+        <bar-space>
+          <button class="app-launcher" title="应用程序启动器"></button>
+          <button class="search" title="全局搜索">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-search"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+              <path d="M21 21l-6 -6" /></svg
+          ></button>
+        </bar-space>
+        <window-buttons></window-buttons>
+        <status-space>
+          <button id="translate" class="language-tools" title="语言工具">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-world"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+              <path d="M3.6 9h16.8" />
+              <path d="M3.6 15h16.8" />
+              <path d="M11.5 3a17 17 0 0 0 0 18" />
+              <path d="M12.5 3a17 17 0 0 1 0 18" />
+            </svg>
+          </button>
+          <button class="power" title="电源状态">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-battery-vertical-eco"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M7 18v-11c0 -1.105 .895 -2 2 -2h.5c.276 0 .5 -.224 .5 -.5s.224 -.5 .5 -.5h3c.276 0 .5 .224 .5 .5s.224 .5 .5 .5h.5c1.105 0 2 .895 2 2v1m-8 12c-1.105 0 -2 -.895 -2 -2"
+              />
+              <path
+                d="M13 17.143c0 -2.84 2.09 -5.143 4.667 -5.143h2.333v.857c0 2.84 -2.09 5.143 -4.667 5.143h-2.333z"
+              />
+              <path d="M13 21v-3" />
+            </svg>
+          </button>
+          <button class="date-time" title="日期时间">0/0/0 0:0</button>
+        </status-space>
+        <bar-space>
+          <button class="exit" title="退出">
+            <!-- Copyright (c) 2018-2025 Tabler -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-logout"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"
+              />
+              <path d="M9 12h12l-3 -3" />
+              <path d="M18 15l3 -3" />
+            </svg>
+          </button>
+        </bar-space>
+      </task-bar>
+    </taskbar-container>
+    <script type="text/js-worker" id="processWorker">
+      // 进程 Worker 脚本
+      class WorkerProcess {
+        constructor(id, parentId) {
+          this.id = id;
+          this.parentId = parentId;
+          this.command = "";
+          this.settings = {};
+          this.active = false;
+        }
+
+        // 添加设置项
+        addSetting(key, defaultValue) {
+          this.settings[key] = defaultValue;
+        }
+
+        // 更新设置项
+        updateSetting(key, value) {
+          if (this.settings.hasOwnProperty(key)) {
+            this.settings[key] = value;
+          }
+        }
+
+        // 安全命令执行（白名单机制）
+        safeExecute(commandName) {
+          const commandMap = {
+            log: (msg) => console.log(msg),
+            calculate: (expr) => eval(expr), // 仅允许计算表达式
+          };
+
+          if (commandMap[commandName]) {
+            return commandMap[commandName](...arguments);
+          } else {
+            console.error(`未知命令: ${commandName}`);
+          }
+        }
+
+        // 发送消息到主线程
+        sendMessage(targetId, messageType, data) {
+          self.postMessage({
+            type: "process-message",
+            from: this.id,
+            targetId,
+            messageType,
+            data,
+          });
+        }
+
+        // 处理主线程消息
+        handleMessage(event) {
+          const { type, data } = event.data;
+          if (type === "execute") {
+            const [cmd, ...args] = data.command.split(" ");
+            return this.safeExecute(cmd, ...args);
+          } else if (type === "update-setting") {
+            this.updateSetting(data.key, data.value);
+          } else if (type === "message") {
+            // 处理其他进程消息
+            console.log(`进程 ${this.id} 收到消息:`, data);
+          }
+        }
+      }
+
+      // Worker 入口
+      self.addEventListener("message", (event) => {
+        if (event.data.type === "init") {
+          const { id, parentId } = event.data;
+          const process = new WorkerProcess(id, parentId);
+
+          // 处理后续消息
+          self.addEventListener("message", (e) => {
+            process.handleMessage(e);
+          });
+
+          self.postMessage({ type: "ready", id });
+        }
+      });
+    </script>
+    <script>
+      (function () {
+        // 加载 CSS
+        function loadCSS(url) {
+          return new Promise((resolve, reject) => {
+            //// 检查是否已加载
+            const existingLinks = document.querySelectorAll(
+              `link[href="${url}"]`
+            );
+            if (existingLinks.length > 0) {
+              return resolve(url);
+            }
+
+            //// 创建新的 link 元素
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            link.href = url;
+
+            //// 成功加载处理
+            link.onload = () => {
+              link.onload = null;
+              link.onerror = null;
+              resolve(url);
+            };
+
+            //// 加载失败处理
+            link.onerror = () => {
+              link.onerror = null;
+              link.onload = null;
+              document.head.removeChild(link);
+              reject(new Error(`无法加载 CSS 文件: ${url}`));
+            };
+
+            //// 添加到文档头部
+            document.head.appendChild(link);
+          });
+        }
+
+        // translate-js 翻译系统
+        //// 初始化翻译系统
+        function initTranslate() {
+          try {
+            translate.service.use("client.edge");
+            translate.request.listener.start();
+            translate.setAutoDiscriminateLocalLanguage();
+            translate.language.setUrlParamControl();
+            translate.ignore.class.push("notTranslate");
+            translate.execute();
+          } catch (e) {
+            console.error("翻译系统出错：" + e);
+          }
+        }
+
+        //// 刷新翻译
+        function refreshTranslate() {
+          try {
+            translate.selectLanguageTag.refreshRender();
+          } catch (e) {
+            console.error("刷新翻译出错：" + e);
+          }
+        }
+
+        // 初始化
+        function initialize() {
+          initTranslate(); //// 翻译系统
+          loadCSS(
+            "https://chinese-fonts-cdn.deno.dev/packages/maple-mono-cn/dist/MapleMono-CN-Regular/result.css"
+          ); //// 加载字体 CSS
+        }
+
+        // 触发器
+        //// 网页加载完毕后触发初始化
+        window.addEventListener("DOMContentLoaded", () => initialize());
+
+        // 统一焦点管理器（合并输入管理和焦点管理）
+        class FocusManager {
+          constructor() {
+            // 原FocusManager属性
+            this.focusedWindowId = null;
+            this.focusedElement = null;
+
+            // 原InputManager属性
+            this.windowStack = []; // 窗口堆叠顺序（最近使用在前）
+            this.captureInputProcess = null; // 捕获输入的进程ID
+          }
+
+          // 任务栏窗口按钮样式更新
+          updateWindowButtons(windowId) {
+            const winBtns = document.querySelectorAll(
+              "task-bar window-buttons button"
+            );
+            winBtns.forEach((winBtn) => {
+              winBtn.classList.toggle(
+                "focused",
+                winBtn.dataset.windowId === windowId
+              );
+            });
+          }
+
+          // 设置焦点窗口
+          focusWindow(windowId) {
+            if (this.focusedWindowId === windowId) return;
+
+            // 移除旧窗口的焦点
+            if (this.focusedWindowId) {
+              const prevWindow = wManager.windows.get(this.focusedWindowId);
+              if (prevWindow) prevWindow.blur();
+            }
+
+            // 更新窗口堆叠顺序（原 InputManager 逻辑）
+            this.windowStack = this.windowStack.filter((id) => id !== windowId);
+            this.windowStack.unshift(windowId);
+
+            // 设置新焦点窗口
+            this.focusedWindowId = windowId;
+            this.releaseInput(); // 窗口聚焦时释放输入捕获
+
+            const window = wManager.windows.get(windowId);
+            if (window) {
+              window.focus();
+              this.updateWindowButtons(windowId);
+            }
+          }
+
+          // 设置捕获输入的进程（原 InputManager 方法）
+          captureInput(processId) {
+            this.captureInputProcess = processId;
+          }
+
+          // 释放输入捕获（原 InputManager 方法）
+          releaseInput() {
+            this.captureInputProcess = null;
+          }
+
+          // 移除已关闭窗口的状态（合并原 InputManager 和 FocusManager 逻辑）
+          removeWindow(windowId) {
+            // 原 InputManager 窗口移除逻辑
+            this.windowStack = this.windowStack.filter((id) => id !== windowId);
+            if (this.focusedWindowId === windowId) {
+              this.focusedWindowId = null;
+              if (this.windowStack.length > 0) {
+                this.focusWindow(this.windowStack[0]);
+              }
+            }
+
+            // 原 FocusManager 窗口移除逻辑
+            if (this.focusedWindowId === windowId) {
+              this.focusedWindowId = null;
+            }
+            if (
+              this.focusedElement &&
+              this.focusedElement.closest(`[data-window-id="${windowId}"]`)
+            ) {
+              this.focusedElement = null;
+            }
+          }
+
+          // 切换到下一个窗口 (Alt+Tab)（原 InputManager 方法）
+          nextWindow() {
+            if (this.windowStack.length < 2) return;
+
+            // 将当前窗口移到末尾
+            const current = this.windowStack.shift();
+            this.windowStack.push(current);
+
+            // 聚焦新窗口
+            this.focusedWindowId = this.windowStack[0];
+            return this.focusedWindowId;
+          }
+
+          // 设置焦点元素（原 FocusManager 方法）
+          focusElement(element, windowId) {
+            if (this.focusedElement) {
+              this.focusedElement.blur();
+            }
+
+            this.focusedElement = element;
+            this.focusWindow(windowId);
+            element.focus();
+          }
+
+          // 清除焦点（原 FocusManager 方法）
+          clearFocus() {
+            // 清除当前焦点元素
+            if (this.focusedElement) {
+              this.focusedElement.blur();
+              this.focusedElement = null;
+            }
+
+            // 清除当前焦点窗口的样式
+            if (this.focusedWindowId) {
+              const prevWindow = wManager.windows.get(this.focusedWindowId);
+              if (prevWindow) prevWindow.blur();
+              this.focusedWindowId = null;
+            }
+
+            this.updateWindowButtons(this.focusedWindowId);
+          }
+        }
+
+        // 层级管理器
+        class LayerManager {
+          static LAYERS = {
+            BACKGROUND: { zIndex: 100, maxWindows: 10 }, // 背景层
+            WINDOW: { zIndex: 1000, maxWindows: 100 }, // 窗口层
+            TOP: { zIndex: 3000, maxWindows: 10 }, // 顶层（弹窗、菜单等）
+          };
+
+          constructor() {
+            this.windowLayers = new Map(); // windowId -> layerType
+            this.layerStacks = {
+              BACKGROUND: [],
+              WINDOW: [],
+              TOP: [],
+            };
+          }
+
+          // 添加窗口到指定层
+          addToLayer(windowId, layerType = "WINDOW") {
+            if (!LayerManager.LAYERS[layerType]) {
+              console.error(`无效的层级类型: ${layerType}`);
+              return;
+            }
+
+            // 从原有层移除
+            this.removeWindow(windowId);
+
+            // 添加到新层
+            this.windowLayers.set(windowId, layerType);
+            this.layerStacks[layerType].push(windowId);
+
+            // 确保不超过最大窗口数
+            const maxWindows = LayerManager.LAYERS[layerType].maxWindows;
+            if (this.layerStacks[layerType].length > maxWindows) {
+              const removedId = this.layerStacks[layerType].shift();
+              this.windowLayers.delete(removedId);
+            }
+
+            // 层级变更时更新所有窗口
+            this.updateAllWindows();
+          }
+
+          // 获取窗口所在层
+          getWindowLayer(windowId) {
+            return this.windowLayers.get(windowId) || "WINDOW";
+          }
+
+          // 提升窗口到层内最前
+          bringToFront(windowId) {
+            const layerType = this.getWindowLayer(windowId);
+            const stack = this.layerStacks[layerType];
+
+            // 从原位置移除
+            const index = stack.indexOf(windowId);
+            if (index > -1) {
+              stack.splice(index, 1);
+            }
+
+            // 添加到栈顶
+            stack.push(windowId);
+
+            // 层级变更时更新所有窗口
+            this.updateAllWindows();
+          }
+
+          // 移除窗口
+          removeWindow(windowId) {
+            const layerType = this.getWindowLayer(windowId);
+            if (layerType) {
+              const stack = this.layerStacks[layerType];
+              const index = stack.indexOf(windowId);
+              if (index > -1) {
+                stack.splice(index, 1);
+              }
+            }
+            this.windowLayers.delete(windowId);
+
+            // 层级变更时更新所有窗口
+            this.updateAllWindows();
+          }
+
+          // 遍历更新所有窗口层级（新增方法）
+          updateAllWindows() {
+            // 遍历所有层
+            for (const [layerType, stack] of Object.entries(this.layerStacks)) {
+              const baseZIndex = LayerManager.LAYERS[layerType].zIndex;
+
+              // 遍历层内所有窗口
+              stack.forEach((windowId, index) => {
+                const window = wManager.windows.get(windowId);
+                if (window) {
+                  // 计算z-index: 基础值 + 在层内的位置
+                  window.element.style.zIndex = baseZIndex + index;
+                }
+              });
+            }
+          }
+        }
+
+        // 全局焦点管理器实例
+        const fManager = new FocusManager();
+
+        // 窗口管理类
+        class WindowManager {
+          constructor() {
+            this.windows = new Map();
+            this.layerManager = new LayerManager();
+            this.windowIdCounter = 0;
+            this.windowsContainer =
+              document.getElementById("windows-container");
+            // 全屏窗口计数
+            this.fullscreenCount = 0;
+            this.taskBar = document.querySelector("task-bar");
+          }
+
+          // 创建新窗口
+          createWindow(processId, config = {}) {
+            const windowId = `window-${this.windowIdCounter++}`; // 使用递增ID
+            const win = new PageWin(windowId, processId, config);
+            translate.execute([win.element]);
+            this.windows.set(windowId, win);
+            this.windowsContainer.appendChild(win.element);
+
+            // 如果窗口初始为全屏，则增加计数
+            if (config.fullscreen) {
+              this.updateFullscreenCount(1);
+            }
+
+            // 任务栏窗口按钮
+            const taskbar = document.querySelector("task-bar window-buttons");
+            const windowBtn = document.createElement("button");
+            windowBtn.innerHTML = win.config.icon
+              ? win.config.icon
+              : win.config.title.charAt(0).toUpperCase();
+            windowBtn.title = win.config.title;
+            windowBtn.dataset.windowId = windowId;
+            windowBtn.addEventListener("click", () => {
+              fManager.focusWindow(windowId);
+              this.focusWindow(windowId);
+            });
+
+            // 设置右键菜单选项
+            const menuOptions = [
+              { label: "移动窗口", action: "move" },
+              { label: "最小化", action: "minimize" },
+              { label: "最大化", action: "maximize" },
+              { label: "关闭", action: "close" },
+            ];
+            windowBtn.dataset.menuOptions = JSON.stringify(menuOptions);
+            translate.execute([windowBtn]);
+            taskbar.appendChild(windowBtn);
+
+            return windowId;
+          }
+
+          // TODO: 是否删除：聚焦窗口
+          focusWindow(windowId) {
+            const win = this.windows.get(windowId);
+            if (win) {
+              // 使用层级管理器设置z-index
+              const zIndex = this.layerManager.bringToFront(windowId);
+              win.element.style.zIndex = zIndex;
+              win.focus(); // 通知窗口获得焦点
+            }
+          }
+
+          // 关闭窗口的统一入口
+          closeWindow(windowId) {
+            const win = this.windows.get(windowId);
+            if (win) {
+              // 如果窗口是全屏状态，则减少计数
+              if (win.config.fullscreen) {
+                this.updateFullscreenCount(-1);
+              }
+              win.cleanup();
+              this.windows.delete(windowId);
+              win.element.remove();
+
+              // 删除任务栏窗口按钮
+              const taskbar = document.querySelector("task-bar window-buttons");
+              taskbar.querySelector(`[data-window-id="${windowId}"]`).remove();
+
+              // 更新焦点管理器和层级管理器
+              fManager.removeWindow(windowId);
+              this.layerManager.removeWindow(windowId);
+            }
+          }
+
+          moveWindow(windowId) {
+            const win = this.windows.get(windowId);
+            if (win) {
+              // 激活窗口
+              this.focusWindow(windowId);
+              fManager.focusWindow(windowId);
+
+              win.element.classList.add("dragging");
+              win.isDragging = true;
+            }
+          }
+
+          minimizeWindow(windowId) {
+            const win = this.windows.get(windowId);
+            if (win) {
+              win.toggleMinimize();
+            }
+          }
+
+          maximizeWindow(windowId) {
+            const win = this.windows.get(windowId);
+            if (win) {
+              win.toggleMaximize();
+            }
+          }
+
+          // 通过进程 ID 获取窗口
+          getWindowsByProcess(processId) {
+            return Array.from(this.windows.values()).filter(
+              (w) => w.processId === processId
+            );
+          }
+
+          // 更新全屏窗口计数
+          updateFullscreenCount(change) {
+            this.fullscreenCount += change;
+            if (this.fullscreenCount < 0) {
+              this.fullscreenCount = 0;
+            }
+            if (this.fullscreenCount > 0) {
+              this.taskBar.classList.add("hide");
+            } else {
+              this.taskBar.classList.remove("hide");
+            }
+          }
+        }
+
+        // 窗口类
+        class PageWin {
+          constructor(id, processId, config) {
+            var i = document.createElement("i");
+            i.textContent = "空内容";
+            this.id = id;
+            this.processId = processId;
+            this.config = {
+              css: {},
+              borderless: false,
+              fullscreen: false,
+              minimized: false,
+              icon: '<!-- Copyright (c) 2018-2025 Tabler --><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-app-window"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" /><path d="M6 8h.01" /><path d="M9 8h.01" /></svg>',
+              title: "窗口",
+              width: window.innerWidth * 0.5,
+              height: window.innerHeight * 0.5,
+              x: window.innerWidth * 0.25,
+              y: window.innerHeight * 0.25,
+              tabs: [
+                {
+                  title: "标签页",
+                  css: {},
+                  content: i,
+                },
+              ], // { title: string, css: string }[]
+              ...config,
+            };
+            this.activeTabIndex = 0;
+            this.isDragging = false;
+            this.dragOffset = { x: 0, y: 0 };
+            this.isResizing = false;
+            this.resizeDirection = null;
+            this.originalSize = null;
+            this.originalPosition = null;
+            this.preMaximizeState = null;
+
+            this.createDOM();
+            this.setupEventListeners();
+          }
+
+          // 创建窗口DOM结构
+          createDOM() {
+            this.element = document.createElement("div");
+            this.element.dataset.windowId = this.id;
+            for (var property in this.config.css) {
+              this.element.style[property] = this.config.css[property];
+            }
+            this.element.style.width = `${this.config.width}px`;
+            this.element.style.height = `${this.config.height}px`;
+            this.element.style.left = `${this.config.x}px`;
+            this.element.style.top = `${this.config.y}px`;
+            this.element.tabIndex = -1; // 使窗口可聚焦
+
+            this.element.classList.add("window");
+            if (this.config.borderless) {
+              this.element.classList.add("borderless");
+            }
+            if (this.config.fullscreen) {
+              this.element.classList.add("fullscreen");
+            }
+            if (this.config.minimized) {
+              this.element.classList.add("minimized");
+            }
+
+            // 标题栏
+            const titleBar = document.createElement("div");
+            titleBar.className = "window-title-bar";
+            titleBar.innerHTML = `<div class="window-icon">${
+              this.config.icon
+                ? this.config.icon
+                : this.config.title.charAt(0).toUpperCase()
+            }</div>
+<div class="window-title">${this.config.title}</div>
+<div class="window-controls">
+  <button class="minimize">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-compact-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 11l8 3l8 -3" /></svg>
+  </button>
+  <button class="maximize">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-maximize"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 8v-2a2 2 0 0 1 2 -2h2" /><path d="M4 16v2a2 2 0 0 0 2 2h2" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M16 20h2a2 2 0 0 0 2 -2v-2" /></svg>
+  </button>
+  <button class="close">
+    <!-- Copyright (c) 2018-2025 Tabler -->
+    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-square-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" /><path d="M9 9l6 6m0 -6l-6 6" /></svg>
+  </button>
+</div>`;
+
+            // 标签页栏
+            const tabBar = document.createElement("div");
+            tabBar.className = "window-tab-bar";
+            this.config.tabs.forEach((tab, index) => {
+              const tabEl = document.createElement("div");
+              tabEl.className = `tab ${
+                index === this.activeTabIndex ? "active" : ""
+              }`;
+              tabEl.textContent = tab.title;
+              tabEl.dataset.tabIndex = index;
+              tabBar.appendChild(tabEl);
+            });
+
+            // 内容区
+            const content = document.createElement("div");
+            content.className = "window-content";
+            this.config.tabs.forEach((tab, index) => {
+              const tabConEl = document.createElement("div");
+              tabConEl.className = `tab-content ${
+                index === this.activeTabIndex ? "active" : ""
+              }`;
+              if (tab.content) {
+                try {
+                  tabConEl.appendChild(tab.content);
+                } catch (e) {
+                  var p = document.createElement("p");
+                  p.style.color = "var(--danger-color)";
+                  p.textContent = e;
+                  tabConEl.appendChild(p);
+                }
+              } else {
+                var i = document.createElement("i");
+                i.textContent = "空内容";
+                tabConEl.appendChild(i);
+              }
+              tabConEl.dataset.tabContentIndex = index;
+              for (var property in tab.css) {
+                tabConEl.style[property] = tab.css[property];
+              }
+              content.appendChild(tabConEl);
+            });
+
+            this.element.appendChild(titleBar);
+            if (this.config.tabs.length > 1) {
+              this.element.appendChild(tabBar);
+            }
+            this.element.appendChild(content);
+
+            // 调整大小手柄
+            const resizeHandle = document.createElement("div");
+            resizeHandle.className = "resize-handle";
+            this.element.appendChild(resizeHandle);
+            this.switchTab(0);
+          }
+
+          // 设置事件监听
+          setupEventListeners() {
+            const titleBar = this.element.querySelector(".window-title-bar");
+            const minimizeBtn = this.element.querySelector(".minimize");
+            const maximizeBtn = this.element.querySelector(".maximize");
+            const closeBtn = this.element.querySelector(".close");
+            const tabs = this.element.querySelectorAll(".tab");
+            const resizeHandle = this.element.querySelector(".resize-handle");
+
+            this.element.addEventListener("mousedown", (e) => {
+              wManager.focusWindow(this.id);
+              fManager.focusWindow(this.id);
+            });
+
+            // 拖动窗口
+            titleBar.addEventListener("mousedown", (e) => {
+              if (
+                e.target === minimizeBtn ||
+                e.target === maximizeBtn ||
+                e.target === closeBtn
+              ) {
+                return;
+              }
+              this.isDragging = true;
+              this.element.classList.add("dragging");
+              if (this.config.fullscreen) {
+                this.dragOffset = {
+                  x: (this.config.width / window.innerWidth) * e.clientX,
+                  y: e.clientY,
+                };
+                this.element.style.left = `${e.clientX - this.dragOffset.x}px`;
+                this.element.style.top = `${e.clientY - this.dragOffset.y}px`;
+                this.toggleMaximize();
+              } else {
+                this.dragOffset = {
+                  x: e.clientX - this.element.offsetLeft,
+                  y: e.clientY - this.element.offsetTop,
+                };
+              }
+            });
+
+            this.handleDocumentMouseMove = (e) => {
+              if (this.isDragging) {
+                // 计算边界，确保窗口不会移出屏幕
+                let newX = e.clientX - this.dragOffset.x;
+                let newY = e.clientY - this.dragOffset.y;
+
+                // newX = Math.max(
+                //   0,
+                //   Math.min(newX, window.innerWidth - this.element.offsetWidth)
+                // );
+                // newY = Math.max(
+                //   0,
+                //   Math.min(newY, window.innerHeight - this.element.offsetHeight)
+                // );
+
+                // 设置新的位置
+                this.element.style.left = newX + "px";
+                this.element.style.top = newY + "px";
+              }
+            };
+
+            this.handleDocumentMouseUp = () => {
+              this.isDragging = false;
+              this.element.classList.remove("dragging");
+            };
+
+            // 添加触摸事件支持
+            titleBar.addEventListener("touchstart", (e) => {
+              if (
+                e.target === minimizeBtn ||
+                e.target === maximizeBtn ||
+                e.target === closeBtn
+              ) {
+                return;
+              }
+              this.isDragging = true;
+              this.element.classList.add("dragging");
+              if (this.config.fullscreen) {
+                this.dragOffset = {
+                  x:
+                    (this.config.width / window.innerWidth) *
+                    e.touches[0].clientX,
+                  y: e.touches[0].clientY,
+                };
+                this.element.style.left = `${
+                  e.touches[0].clientX - this.dragOffset.x
+                }px`;
+                this.element.style.top = `${
+                  e.touches[0].clientY - this.dragOffset.y
+                }px`;
+                this.toggleMaximize();
+              } else {
+                this.dragOffset = {
+                  x: e.touches[0].clientX - this.element.offsetLeft,
+                  y: e.touches[0].clientY - this.element.offsetTop,
+                };
+              }
+              e.preventDefault(); // 防止触摸滚动
+            });
+
+            this.handleDocumentTouchMove = (e) => {
+              if (this.isDragging) {
+                // 计算边界，确保窗口不会移出屏幕
+                let newX = e.touches[0].clientX - this.dragOffset.x;
+                let newY = e.touches[0].clientY - this.dragOffset.y;
+
+                // newX = Math.max(
+                //   0,
+                //   Math.min(newX, window.innerWidth - this.element.offsetWidth)
+                // );
+                // newY = Math.max(
+                //   0,
+                //   Math.min(newY, window.innerHeight - this.element.offsetHeight)
+                // );
+
+                // 设置新的位置
+                this.element.style.left = newX + "px";
+                this.element.style.top = newY + "px";
+                e.preventDefault(); // 防止触摸滚动
+              }
+            };
+
+            this.handleDocumentTouchEnd = () => {
+              this.isDragging = false;
+              this.element.classList.remove("dragging");
+            };
+
+            document.addEventListener(
+              "touchmove",
+              this.handleDocumentTouchMove,
+              { passive: false }
+            );
+            document.addEventListener("touchend", this.handleDocumentTouchEnd);
+
+            document.addEventListener(
+              "mousemove",
+              this.handleDocumentMouseMove
+            );
+            document.addEventListener("mouseup", this.handleDocumentMouseUp);
+
+            // 窗口控制按钮
+            minimizeBtn.addEventListener("click", () => this.toggleMinimize());
+            maximizeBtn.addEventListener("click", () => this.toggleMaximize());
+            closeBtn.addEventListener("click", () =>
+              wManager.closeWindow(this.id)
+            );
+
+            // 标签页切换
+            tabs.forEach((tab) => {
+              tab.addEventListener("click", (e) => {
+                const tabIndex = parseInt(e.target.dataset.tabIndex);
+                this.switchTab(tabIndex);
+                fManager.focusWindow(this.id);
+              });
+            });
+
+            // 调整大小事件
+            resizeHandle.addEventListener("mousedown", this.handleResizeStart);
+          }
+
+          // 窗口获得焦点
+          focus() {
+            if (this.config.minimized) {
+              this.config.minimized = !this.config.minimized;
+              this.element.classList.remove("minimized");
+            }
+            this.element.classList.add("focused");
+          }
+
+          // 窗口失去焦点
+          blur() {
+            this.element.classList.remove("focused");
+          }
+
+          // 切换标签页
+          switchTab(index) {
+            this.activeTabIndex = index;
+            const tabs = this.element.querySelectorAll(".tab");
+            const contents = this.element.querySelectorAll(".tab-content");
+
+            tabs.forEach((tab, i) => {
+              tab.classList.toggle("active", i === index);
+            });
+            contents.forEach((content, i) => {
+              content.classList.toggle("active", i === index);
+            });
+          }
+
+          // 最小化/恢复窗口
+          toggleMinimize() {
+            if (this.config.fullscreen) {
+              this.config.fullscreen = !this.config.fullscreen;
+              this.element.classList.remove("fullscreen");
+              wManager.updateFullscreenCount(-1);
+            }
+            fManager.clearFocus();
+            this.config.minimized = !this.config.minimized;
+            this.element.classList.toggle("minimized", this.config.minimized);
+          }
+
+          // 最大化/恢复窗口
+          toggleMaximize() {
+            if (this.config.minimized) {
+              this.config.minimized = !this.config.minimized;
+              this.element.classList.remove("minimized");
+            }
+            const wasFullscreen = this.config.fullscreen;
+            this.config.fullscreen = !this.config.fullscreen;
+            const isNowFullscreen = this.config.fullscreen;
+            this.element.classList.toggle("fullscreen", this.config.fullscreen);
+
+            // 更新全屏计数
+            if (wasFullscreen && !isNowFullscreen) {
+              wManager.updateFullscreenCount(-1);
+            } else if (!wasFullscreen && isNowFullscreen) {
+              wManager.updateFullscreenCount(1);
+            }
+          }
+
+          // 关闭窗口
+          cleanup() {
+            // 移除所有事件监听器
+            document.removeEventListener(
+              "mousemove",
+              this.handleDocumentMouseMove
+            );
+            document.removeEventListener("mouseup", this.handleDocumentMouseUp);
+            document.removeEventListener("mousemove", this.handleResize);
+            document.removeEventListener("mouseup", this.handleResizeEnd);
+
+            // 从窗口元素移除 win-close 监听器
+            if (this.closeHandler) {
+              this.element.removeEventListener("win-close", this.closeHandler);
+            }
+
+            // 通知管理器移除窗口状态（统一管理）
+            fManager.removeWindow(this.id);
+          }
+
+          // 设置关闭处理器
+          setCloseHandler(handler) {
+            this.closeHandler = handler;
+            this.element.addEventListener("win-close", handler);
+          }
+
+          close() {
+            // 触发关闭事件
+            this.element.dispatchEvent(
+              new CustomEvent("win-close", { bubbles: true })
+            );
+            // 清理窗口
+            this.cleanup();
+            // 从DOM和管理器中移除
+            this.element.remove();
+            wManager.windows.delete(this.id);
+          }
+
+          // 调整大小功能
+          handleResizeStart = (e) => {
+            e.stopPropagation();
+            this.isResizing = true;
+            this.element.classList.add("resizing");
+            this.resizeStartX = e.clientX;
+            this.resizeStartY = e.clientY;
+            this.originalWidth = this.element.offsetWidth;
+            this.originalHeight = this.element.offsetHeight;
+            document.addEventListener("mousemove", this.handleResize);
+            document.addEventListener("mouseup", this.handleResizeEnd);
+            wManager.focusWindow(this.id);
+            fManager.focusWindow(this.id);
+          };
+
+          handleResize = (e) => {
+            if (!this.isResizing) return;
+
+            const dx = e.clientX - this.resizeStartX;
+            const dy = e.clientY - this.resizeStartY;
+
+            const minWidth = 200;
+            const minHeight = 150;
+
+            const newWidth = Math.max(minWidth, this.originalWidth + dx);
+            const newHeight = Math.max(minHeight, this.originalHeight + dy);
+
+            this.element.style.width = `${newWidth}px`;
+            this.element.style.height = `${newHeight}px`;
+          };
+
+          handleResizeEnd = () => {
+            this.isResizing = false;
+            this.element.classList.remove("resizing");
+            document.removeEventListener("mousemove", this.handleResize);
+            document.removeEventListener("mouseup", this.handleResizeEnd);
+          };
+        }
+
+        // 全局窗口管理器实例
+        const wManager = new WindowManager();
+
+        // 拦截全局输入事件
+        document.addEventListener("keydown", (e) => {
+          // 只有焦点窗口能接收键盘事件
+          if (!fManager.focusedWindowId) return;
+
+          // 阻止事件冒泡到非焦点窗口
+          const targetWindow = e.target.closest(".window");
+          if (
+            !targetWindow ||
+            targetWindow.dataset.windowId !== fManager.focusedWindowId
+          ) {
+            e.stopPropagation();
+          }
+        });
+
+        document.addEventListener("mousedown", (e) => {
+          const windowElement = e.target.closest(".window");
+          if (windowElement) {
+            // 点击窗口时设置焦点
+            fManager.focusWindow(windowElement.dataset.windowId);
+          } else {
+            // 点击窗口外区域清除焦点
+            fManager.clearFocus();
+          }
+        });
+
+        class ProcessManager {
+          constructor() {
+            this.workers = new Map();
+            this.registry = new Map(); // 权限注册表 {进程 ID: 允许通信的目标 ID 集合}
+          }
+
+          // 创建新进程
+          async createProcess(id, parentId = null) {
+            const workerScript =
+              document.querySelector("#processWorker").textContent;
+            const blob = new Blob([workerScript], {
+              type: "application/javascript",
+            });
+            const worker = new Worker(URL.createObjectURL(blob));
+            this.workers.set(id, worker);
+
+            // 初始化权限
+            this.registry.set(id, new Set());
+            if (parentId) {
+              this.allowCommunication(parentId, id);
+            }
+
+            // 处理 Worker 消息
+            worker.onmessage = (event) => {
+              if (event.data.type === "process-message") {
+                const { targetId, messageType, data, from } = event.data;
+                this.sendMessage(from, targetId, messageType, data);
+              }
+            };
+
+            // 初始化 Worker
+            worker.postMessage({
+              type: "init",
+              id,
+              parentId,
+            });
+
+            return new Promise((resolve) => {
+              worker.addEventListener(
+                "message",
+                function ready(e) {
+                  if (e.data.type === "ready") {
+                    resolve();
+                  }
+                },
+                { once: true }
+              );
+            });
+          }
+
+          // 允许进程通信
+          allowCommunication(sourceId, targetId) {
+            if (this.registry.has(sourceId)) {
+              this.registry.get(sourceId).add(targetId);
+            }
+          }
+
+          // 发送进程消息
+          sendMessage(sourceId, targetId, messageType, data) {
+            if (!this.registry.get(sourceId)?.has(targetId)) {
+              console.error(`进程 ${sourceId} 无权向 ${targetId} 发送消息`);
+              return;
+            }
+
+            const worker = this.workers.get(targetId);
+            if (worker) {
+              worker.postMessage({
+                type: "message",
+                data: {
+                  type: messageType,
+                  data,
+                  from: sourceId,
+                },
+              });
+            }
+          }
+
+          // 执行进程命令
+          executeCommand(processId, command) {
+            const worker = this.workers.get(processId);
+            if (worker) {
+              worker.postMessage({
+                type: "execute",
+                data: { command },
+              });
+            }
+          }
+
+          // 更新进程设置
+          updateSetting(processId, key, value) {
+            const worker = this.workers.get(processId);
+            if (worker) {
+              worker.postMessage({
+                type: "update-setting",
+                data: { key, value },
+              });
+            }
+          }
+
+          // 终止进程
+          terminateProcess(processId) {
+            const worker = this.workers.get(processId);
+            if (worker) {
+              worker.terminate();
+              this.workers.delete(processId);
+              this.registry.delete(processId);
+            }
+          }
+        }
+
+        // 初始化进程管理器
+        const pManager = new ProcessManager();
+
+        // 应用程序：创建一个进程，该进程可创建多个窗口，当所有该进程的窗口都关闭时，进程自动退出
+        async function application(appProcessId, windowConfigs) {
+          await pManager.createProcess(appProcessId);
+
+          var count = 0;
+
+          // 跟踪窗口关闭状态
+          let windows = [];
+
+          windowConfigs.forEach((windowConfig) => {
+            // 创建窗口
+            const windowId = wManager.createWindow(appProcessId, windowConfig);
+
+            // 焦点
+            fManager.focusWindow(windowId);
+            wManager.focusWindow(windowId);
+
+            // 通过事件监听来监控窗口关闭
+            const windowObj = { windowId: windowId, closed: false };
+            windows[count] = windowObj;
+
+            // 监听窗口关闭事件
+            const closeHandler = () => {
+              windowObj.closed = true;
+              // 检查是否所有窗口都已关闭
+              const allClosed = windows.every((w) => w.closed);
+              if (allClosed) {
+                // 所有窗口都已关闭，终止进程
+                pManager.terminateProcess(appProcessId);
+              }
+            };
+
+            // 设置关闭处理器
+            const windowInstance = wManager.windows.get(windowId);
+            if (windowInstance) {
+              windowInstance.setCloseHandler(closeHandler);
+            } else {
+              console.warn(`未找到窗口实例: ${windowId}`);
+            }
+
+            count++;
+          });
+        }
+
+        // 自定义右键菜单功能
+        function initOptionMenu(doc) {
+          // 隐藏菜单后，将菜单移动到屏幕内
+          function inScreen(contextMenu) {
+            contextMenu.style.left = "2px";
+            contextMenu.style.top = "2px";
+          }
+
+          // 初始化样式
+          var style = doc.createElement("style");
+          style.type = "text/css";
+          style.innerHTML = `
+            #custom-context-menu {
+              --accent-color: #64ffda; /* 强调色：边框 */
+              --secondary-color: #00695c; /* 次要色：未激活边框 */
+              --danger-color: #ff6d00; /* 着重色：边框 */
+              --accent-bg-color: #009688;
+              --secondary-bg-color: #616161;
+              --content-bg-color: #424242;
+              --accent-font-color: #f5f5f5;
+              --secondary-font-color: #eeeeee;
+
+              --margin-padding: 0.5rem;
+              --border-thickness: 0.2rem;
+              --border-radius: 0.5rem;
+              --title-bar-height: 2rem;
+              --title-bar-justify-content: left;
+              --task-bar-height: 3rem;
+
+              --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+              --focused-bg-color: rgba(255, 255, 255, 0.1);
+
+              font-size: small;
+              user-select: none;
+              position: absolute;
+              background-color: var(--content-bg-color);
+              border: var(--border-thickness) solid var(--secondary-color);
+              border-radius: var(--border-radius);
+              padding: 0;
+              opacity: 0;
+              transform: scale(0.8);
+              pointer-events: none;
+              z-index: 4000; /* 确保在顶层 */
+              min-width: 150px;
+
+              &.show {
+                display: block;
+                opacity: 1;
+                transform: scale(1);
+                pointer-events: auto;
+              }
+
+              &:hover {
+                box-shadow: var(--shadow);
+                --secondary-color: var(--accent-color);
+              }
+            }
+
+            #custom-context-menu ul {
+              list-style: none;
+              margin: 0;
+              padding: 0;
+            }
+
+            #custom-context-menu li {
+              padding: var(--margin-padding);
+              cursor: pointer;
+              list-style-type: none; /* 去除列表项标记 */
+            }
+
+            #custom-context-menu li:hover {
+              background-color: var(--focused-bg-color);
+            }`;
+          style.id = "addStyle";
+          doc.getElementsByTagName("HEAD").item(0).appendChild(style);
+
+          // 初始化元素
+          const contextMenu = doc.createElement("ul");
+          contextMenu.id = "custom-context-menu";
+          doc.body.appendChild(contextMenu);
+
+          // 监听全局右键点击事件
+          doc.addEventListener("contextmenu", function (e) {
+            // 阻止默认右键菜单
+            e.preventDefault();
+
+            // 获取被点击的元素
+            const target = e.target;
+            const selection = window.getSelection();
+            const hasSelection =
+              selection && selection.toString().trim().length > 0;
+
+            // 检查事件目标是否在选区内
+            let inSelection = false;
+            if (hasSelection && selection.rangeCount > 0) {
+              const range = selection.getRangeAt(0);
+              inSelection = range.intersectsNode(e.target);
+            }
+
+            // 如果有文本被选中且右键点击在选区内，显示默认文本操作菜单
+            if (hasSelection && inSelection) {
+              const defaultTextOptions = [
+                { label: "复制", action: "copy" },
+                { label: "剪切", action: "cut" },
+                { label: "粘贴", action: "paste" },
+                { label: "全选", action: "selectAll" },
+              ];
+
+              // 清空菜单
+              contextMenu.innerHTML = "";
+              // 生成菜单项
+              defaultTextOptions.forEach((option) => {
+                const li = doc.createElement("li");
+                li.textContent = option.label;
+                li.onclick = function () {
+                  if (option.action === "copy") {
+                    doc.execCommand("copy");
+                  } else if (option.action === "cut") {
+                    doc.execCommand("cut");
+                  } else if (option.action === "paste") {
+                    doc.execCommand("paste");
+                  } else if (option.action === "selectAll") {
+                    doc.execCommand("selectAll");
+                  }
+                  contextMenu.classList.remove("show");
+                  inScreen(contextMenu);
+                };
+                contextMenu.appendChild(li);
+              });
+
+              // 显示菜单（确保在屏幕内）
+              translate.execute([contextMenu]);
+              contextMenu.classList.add("show");
+
+              // 获取菜单尺寸
+              const menuWidth = contextMenu.offsetWidth;
+              const menuHeight = contextMenu.offsetHeight;
+
+              // 计算调整后的位置
+              let adjustedLeft = e.pageX;
+              let adjustedTop = e.pageY;
+
+              // 如果靠近右边缘，向左偏移
+              if (window.innerWidth - e.pageX < menuWidth) {
+                adjustedLeft = e.pageX - menuWidth;
+              }
+
+              // 如果靠近下边缘，向上偏移
+              if (window.innerHeight - e.pageY < menuHeight) {
+                adjustedTop = e.pageY - menuHeight;
+              }
+
+              contextMenu.style.left = adjustedLeft + "px";
+              contextMenu.style.top = adjustedTop + "px";
+            }
+            // 否则检查元素的 data-menu-options 属性
+            else if (target.dataset.menuOptions) {
+              try {
+                // 解析 JSON 字符串
+                const menuOptions = JSON.parse(target.dataset.menuOptions);
+                // 清空菜单
+                contextMenu.innerHTML = "";
+                // 动态生成菜单项
+                menuOptions.forEach((option) => {
+                  const li = doc.createElement("li");
+                  li.textContent = option.label;
+                  li.onclick = function () {
+                    // 执行action
+                    if (option.action) {
+                      // 触发自定义事件
+                      const event = new CustomEvent(
+                        "custom-contextmenu-action",
+                        {
+                          detail: {
+                            action: option.action,
+                            target: target,
+                          },
+                        }
+                      );
+                      doc.dispatchEvent(event);
+                    }
+                    // 隐藏菜单
+                    contextMenu.classList.remove("show");
+                    inScreen(contextMenu);
+                  };
+                  contextMenu.appendChild(li);
+                });
+
+                // 显示菜单（确保在屏幕内）
+                translate.execute([contextMenu]);
+                contextMenu.classList.add("show");
+
+                // 获取菜单尺寸
+                const menuWidth = contextMenu.offsetWidth;
+                const menuHeight = contextMenu.offsetHeight;
+
+                // 计算调整后的位置
+                let adjustedLeft = e.pageX;
+                let adjustedTop = e.pageY;
+
+                // 如果靠近右边缘，向左偏移
+                if (window.innerWidth - e.pageX < menuWidth) {
+                  adjustedLeft = e.pageX - menuWidth;
+                }
+
+                // 如果靠近下边缘，向上偏移
+                if (window.innerHeight - e.pageY < menuHeight) {
+                  adjustedTop = e.pageY - menuHeight;
+                }
+
+                contextMenu.style.left = adjustedLeft + "px";
+                contextMenu.style.top = adjustedTop + "px";
+              } catch (error) {
+                console.error("解析菜单选项失败", error);
+              }
+            } else {
+              // 如果没有定义菜单选项，则隐藏菜单
+              contextMenu.classList.remove("show");
+              inScreen(contextMenu);
+            }
+          });
+
+          // 点击其他地方隐藏菜单
+          doc.addEventListener("click", function () {
+            contextMenu.classList.remove("show");
+            inScreen(contextMenu);
+          });
+
+          // 阻止菜单内部的点击事件冒泡
+          contextMenu.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+
+          // 处理任务栏窗口按钮的右键菜单动作
+          doc.addEventListener("custom-contextmenu-action", function (e) {
+            const { action, target } = e.detail;
+            const windowId = target.dataset.windowId;
+            if (!windowId) return;
+
+            if (action === "move") {
+              wManager.moveWindow(windowId);
+            } else if (action === "minimize") {
+              wManager.minimizeWindow(windowId);
+            } else if (action === "maximize") {
+              wManager.maximizeWindow(windowId);
+            } else if (action === "close") {
+              wManager.closeWindow(windowId);
+            }
+          });
+
+          // 当视口大小改变（如浏览器窗口大小改变）时执行
+          window.addEventListener("resize", function () {
+            // 等待后居中 contextMenu
+            setTimeout(() => {
+              if (contextMenu.style.display === "none") {
+                inScreen(contextMenu);
+              }
+            }, 500);
+          });
+        }
+
+        initOptionMenu(document);
+
+        (async function init() {
+          // (async function desktop() {
+          //   // 为桌面进程创建全屏无边框窗口（桌面背景）
+          //   const desktopWin = wManager.createWindow("desktop", {
+          //     css: {
+          //       "z-index": "-1",
+          //       "pointer-events": "none",
+          //     },
+          //     borderless: true,
+          //     fullscreen: true,
+          //     title: "桌面背景",
+          //     tabs: [
+          //       {
+          //         title: "桌面",
+          //         css: {
+          //           position: "absolute",
+          //           top: "0",
+          //           left: "0",
+          //           width: "100%",
+          //           height: "100%",
+          //           background: "linear-gradient(#EEE, #666)",
+          //           "z-index": "-1",
+          //           overflow: "hidden",
+          //         },
+          //         content: " ",
+          //       },
+          //     ],
+          //   });
+          // })();
+
+          (async function taskBar() {
+            const taskBarProcess = await pManager.createProcess("taskBar");
+            const taskbarContainer =
+              document.querySelector("taskbar-container");
+            const taskBar = taskbarContainer.querySelector("task-bar");
+
+            (async function time() {
+              // 日期时间显示功能
+              const updateDateTime = () => {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString("zh-CN", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                });
+                const timeStr = now.toLocaleTimeString("zh-CN", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+                taskBar.querySelector(
+                  ".date-time"
+                ).textContent = `${dateStr} ${timeStr}`;
+              };
+
+              // 初始更新并设置定时器
+              updateDateTime();
+              setInterval(updateDateTime, 1000);
+            })();
+
+            (async function power() {
+              // 电池状态功能（https://developer.mozilla.org/zh-CN/docs/Web/API/Battery_Status_API）
+              const powerButton = taskBar.querySelector(".power");
+
+              async function updateBatteryStatus() {
+                const battery_exclamation =
+                  '<!-- Copyright (c) 2018-2025 Tabler --><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-exclamation"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 17h8c1.105 0 2 -.895 2 -2v-.5c0 -.276 .224 -.5 .5 -.5s.5 -.224 .5 -.5v-3c0 -.276 -.224 -.5 -.5 -.5s-.5 -.224 -.5 -.5v-.5c0 -1.105 -.895 -2 -2 -2h-11c-1.105 0 -2 .895 -2 2v3" /><path d="M5 16v3" /><path d="M5 22v.01" /></svg>';
+                try {
+                  if (!navigator.getBattery) {
+                    powerButton.title = "电池状态不可用";
+                    powerButton.innerHTML = battery_exclamation; // 感叹号图标
+                    console.warn("浏览器不支持电池状态 API");
+                    return;
+                  }
+
+                  const battery = await navigator.getBattery();
+                  const level = Math.floor(battery.level * 100);
+                  let statusText = `电量: ${level}%`;
+                  let batteryIcon = battery_exclamation; // 默认感叹号图标
+
+                  // 充电状态使用充电图标
+                  if (battery.charging) {
+                    batteryIcon =
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-charging-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 9a2 2 0 0 1 2 -2h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-4.5" /><path d="M3 15h6v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2v-2z" /><path d="M6 22v-3" /><path d="M4 15v-2.5" /><path d="M8 15v-2.5" /></svg>';
+                    statusText += " (充电中)";
+                    if (battery.chargingTime < Infinity) {
+                      statusText += ` | 充满时间: ${Math.floor(
+                        battery.chargingTime / 60
+                      )}分钟`;
+                    }
+                  }
+                  // 非充电状态根据电量选择图标
+                  else {
+                    const icons = [
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /></svg>', // 0%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-1"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /></svg>', // 25%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /></svg>', // 50%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /><path d="M13 10l0 4" /></svg>', // 75%
+                      '<!-- Copyright (c) 2018-2025 Tabler --><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-battery-4"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 7h11a2 2 0 0 1 2 2v.5a.5 .5 0 0 0 .5 .5a.5 .5 0 0 1 .5 .5v3a.5 .5 0 0 1 -.5 .5a.5 .5 0 0 0 -.5 .5v.5a2 2 0 0 1 -2 2h-11a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2" /><path d="M7 10l0 4" /><path d="M10 10l0 4" /><path d="M13 10l0 4" /><path d="M16 10l0 4" /></svg>', // 100%
+                    ];
+                    const index = Math.min(Math.floor(level / 25), 4); // 25: 状态之间的间隔、4: 状态的个数减一
+                    batteryIcon = level = icons[index];
+
+                    if (battery.dischargingTime < Infinity) {
+                      statusText += ` | 剩余时间: ${Math.floor(
+                        battery.dischargingTime / 60
+                      )}分钟`;
+                    }
+                  }
+
+                  powerButton.innerHTML = batteryIcon;
+                  powerButton.title = statusText;
+                  powerButton.style.display = "block";
+
+                  // 添加事件监听器
+                  battery.addEventListener(
+                    "chargingchange",
+                    updateBatteryStatus
+                  );
+                  battery.addEventListener("levelchange", updateBatteryStatus);
+                  battery.addEventListener(
+                    "chargingtimechange",
+                    updateBatteryStatus
+                  );
+                  battery.addEventListener(
+                    "dischargingtimechange",
+                    updateBatteryStatus
+                  );
+                } catch (error) {
+                  powerButton.innerHTML = battery_exclamation;
+                  powerButton.title = "电池状态检测失败";
+                  console.warn("获取电池状态失败:", error);
+                }
+              }
+
+              // 点击显示详细状态
+              powerButton.addEventListener("click", async () => {
+                try {
+                  if (navigator.getBattery) {
+                    const battery = await navigator.getBattery();
+                    const statusDetails = [
+                      `电量: ${Math.floor(battery.level * 100)}%`,
+                      `充电状态: ${battery.charging ? "充电中" : "未充电"}`,
+                      `充电时间: ${
+                        battery.chargingTime === Infinity
+                          ? "未知"
+                          : Math.floor(battery.chargingTime / 60) + "分钟"
+                      }`,
+                      `放电时间: ${
+                        battery.dischargingTime === Infinity
+                          ? "未知"
+                          : Math.floor(battery.dischargingTime / 60) + "分钟"
+                      }`,
+                    ].join("\n");
+
+                    var e = document.createElement("pre");
+                    e.textContent = statusDetails;
+
+                    // 创建电池状态窗口
+                    application("power-manager", [
+                      {
+                        title: "电池状态",
+                        tabs: [
+                          {
+                            title: "详细信息",
+                            content: e,
+                          },
+                        ],
+                      },
+                    ]);
+                  }
+                } catch (error) {
+                  var e = document.createElement("p");
+                  e.style.color = "var(--danger-color)";
+                  e.textContent = "无法获取电池详细信息" + error;
+                  // 创建错误提示窗口
+                  application("power-manager", [
+                    {
+                      title: "电池状态错误",
+                      tabs: [
+                        {
+                          title: "提示",
+                          content: e,
+                        },
+                      ],
+                    },
+                  ]);
+                }
+              });
+
+              // 初始化电池状态
+              updateBatteryStatus();
+            })();
+          })();
+
+          (function apps() {
+            document
+              .querySelector("taskbar-container bar-space .app-launcher")
+              .addEventListener("click", async () => {
+                try {
+                  const launcherPath = "../../../packages/pageos-app-launcher/";
+                  const response = await fetch(launcherPath + "versions.txt");
+                  const versions = await response.text();
+                  const version = versions.split("\n").pop();
+                  const iframe = document.createElement("iframe");
+                  iframe.style.cssText =
+                    "width: 100%; height: 100%; border: none;";
+                  iframe.src = `${launcherPath + version}/index.html`;
+
+                  // 监听菜单 iframe 加载完成事件
+                  iframe.addEventListener("load", function () {
+                    // 获取 iframe 内部文档对象
+                    const iframeDoc =
+                      iframe.contentDocument || iframe.contentWindow.document;
+
+                    // 初始化右键菜单
+                    // initOptionMenu(iframeDoc);
+
+                    // TODO: 翻译 iframe 内部文档元素
+
+                    // 在 iframe 内部文档上绑定点击事件
+                    iframeDoc.addEventListener("click", async function (event) {
+                      const anchor = event.target.closest(
+                        'a[data-pageos="app"]'
+                      );
+                      if (
+                        anchor &&
+                        anchor.href &&
+                        anchor.href.endsWith("metadata.json")
+                      ) {
+                        try {
+                          event.preventDefault();
+                          const response = await fetch(anchor.href);
+                          const metadata = await response.json();
+                          const newIframe = document.createElement("iframe");
+                          newIframe.style.cssText =
+                            "width: 100%; height: 100%; border: none;";
+                          newIframe.src = new URL(
+                            metadata.entry,
+                            anchor.href
+                          ).href;
+                          // newIframe.addEventListener("load", function () {
+                          //   // 获取 iframe 内部文档对象
+                          //   const newIframeDoc =
+                          //     newIframe.contentDocument ||
+                          //     newIframe.contentWindow.document;
+                          // });
+                          application(metadata.id, [
+                            {
+                              icon: metadata.icon
+                                ? `<img src="${
+                                    new URL(metadata.icon, anchor.href).href
+                                  }" />`
+                                : metadata.id[0],
+                              title: metadata.name,
+                              width: window.innerWidth * 0.6,
+                              height: window.innerHeight * 0.6,
+                              x: window.innerWidth * 0.2,
+                              y: window.innerHeight * 0.2,
+                              tabs: [
+                                {
+                                  css: { padding: 0 },
+                                  title: metadata.name,
+                                  content: newIframe,
+                                },
+                              ],
+                            },
+                          ]);
+                        } catch (error) {
+                          console.error("加载 metadata.json 失败:", error);
+                        }
+                      }
+                    });
+                  });
+
+                  application("pageos-app-launcher", [
+                    {
+                      icon: `<img src="${
+                        launcherPath + version
+                      }/assets/icon.svg" />`,
+                      title: "应用程序启动器",
+                      width:
+                        window.innerWidth * 0.9 > 1024
+                          ? 1024
+                          : window.innerWidth * 0.9,
+                      height: window.innerHeight * 0.6,
+                      x:
+                        (window.innerWidth -
+                          (window.innerWidth * 0.9 > 1024
+                            ? 1024
+                            : window.innerWidth * 0.9)) *
+                        0.5,
+                      y: window.innerHeight * 0.25,
+                      tabs: [
+                        {
+                          css: { padding: 0 },
+                          title: "应用程序启动器",
+                          content: iframe,
+                        },
+                      ],
+                    },
+                  ]);
+                } catch (e) {
+                  d = document.createElement("div");
+                  p0 = document.createElement("p");
+                  p0.innerText = "启动程序启动器时出错：";
+                  p1 = document.createElement("p");
+                  p1.classList.add("error");
+                  p1.innerText = e;
+                  p2 = document.createElement("p");
+                  p2.innerText = "建议检查当前页面是否在 PageOS 环境下运行。";
+                  d.appendChild(p0);
+                  d.appendChild(p1);
+                  d.appendChild(p2);
+                  application("error", [
+                    {
+                      title: "启动失败",
+                      tabs: [
+                        {
+                          title: "提示",
+                          content: d,
+                        },
+                      ],
+                    },
+                  ]);
+                }
+              });
+          })();
+        })();
+      })();
+    </script>
+  </body>
+</html>

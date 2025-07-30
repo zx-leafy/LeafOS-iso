@@ -1,0 +1,32 @@
+{
+  "packages": [
+    {
+      "id": "pageos-hello",
+      "name": "PageOS 欢迎",
+      "icon": "",
+      "author": "PJ568",
+      "latest_version": "0.1.2",
+      "description": "A PageOS web application",
+      "location": "./packages/pageos-hello/0.1.2"
+    },
+    {
+      "id": "pageos-app-launcher",
+      "name": "应用程序启动器",
+      "icon": "assets/icon.svg",
+      "author": "PJ568",
+      "latest_version": "0.3.0",
+      "description": "PageOS 的默认应用程序启动器",
+      "location": "./packages/pageos-app-launcher/0.3.0"
+    },
+    {
+      "id": "pageos-ui",
+      "name": "PageOS 用户桌面",
+      "icon": "assets/favicon.svg",
+      "author": "PJ568",
+      "latest_version": "0.4.5",
+      "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
+      "location": "./packages/pageos-ui/0.4.5"
+    }
+  ],
+  "source": []
+}

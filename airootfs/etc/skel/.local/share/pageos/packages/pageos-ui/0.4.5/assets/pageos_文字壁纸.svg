@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svgPreview" width="2880" height="1800" style="" version="1.1" viewBox="0 0 2880 1800" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="bg-gradient" x1=".6545" x2=".3455" y1=".9755" y2=".02447">
+   <stop stop-color="#004d40" offset="0"/>
+   <stop stop-color="#00897b" offset="1"/>
+  </linearGradient>
+  <filter id="shadow" x="0" y="0" width="1" height="1">
+   <feDropShadow dx="3" dy="3" flood-color="rgba(0, 0, 0, 0.5)" stdDeviation="5"/>
+  </filter>
+ </defs>
+ <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
+ <circle transform="rotate(40.16 373.7 1076)" cx="373.7" cy="1076" r="44.71" fill="hsla(331.56689848929227, 70%, 80%, 0.12490977622961238)" filter="blur(3.134536253778947px)" opacity=".1249"/>
+ <ellipse transform="rotate(105 282.6 376.9)" cx="282.6" cy="376.9" rx="137.8" ry="68.89" fill="hsla(119.76301534071915, 70%, 80%, 0.21978929257930566)" filter="blur(48.34558310392023px)" opacity=".2198"/>
+ <rect transform="rotate(244.5 859.6 1508)" x="791.9" y="1440" width="135.4" height="135.4" rx="33.84" fill="hsla(87.34135523419566, 70%, 80%, 0.38913228247350484)" filter="blur(11.06268462956158px)" opacity=".3891"/>
+ <rect transform="rotate(188.5 1470 360.3)" x="1443" y="333" width="54.62" height="54.62" rx="13.65" fill="hsla(312.2659421622683, 70%, 80%, 0.2271940592237231)" filter="blur(43.250640850133124px)" opacity=".2272"/>
+ <rect transform="rotate(35.35 1183 1714)" x="1123" y="1653" width="121.1" height="121.1" rx="30.27" fill="hsla(141.95981046528482, 70%, 80%, 0.3556237879922316)" filter="blur(14.529575714643562px)" opacity=".3556"/>
+ <ellipse transform="rotate(134.9 2380 256.4)" cx="2380" cy="256.4" rx="88.07" ry="44.03" fill="hsla(118.34554797594207, 70%, 80%, 0.2471375395430428)" filter="blur(39.39224110716425px)" opacity=".2471"/>
+ <ellipse transform="rotate(182.9 1341 829.5)" cx="1341" cy="829.5" rx="52.47" ry="26.24" fill="hsla(351.60025528166926, 70%, 80%, 0.29398565147372074)" filter="blur(16.77162146470122px)" opacity=".294"/>
+ <ellipse transform="rotate(-75.47 2272 829.9)" cx="2272" cy="829.9" rx="55.64" ry="27.82" fill="hsla(224.79685164625874, 70%, 80%, 0.2862939525465726)" filter="blur(33.28777757673631px)" opacity=".2863"/>
+ <rect transform="rotate(13.08 1834 1096)" x="1819" y="1082" width="29.8" height="29.8" rx="7.45" fill="hsla(42.654719531703876, 70%, 80%, 0.24557114934309002)" filter="blur(4.832191683943366px)" opacity=".2456"/>
+ <ellipse transform="rotate(-67.84 1049 284.3)" cx="1049" cy="284.3" rx="110.2" ry="55.11" fill="hsla(332.3707490946745, 70%, 80%, 0.2764827901077278)" filter="blur(37.51168135578266px)" opacity=".2765"/>
+ <circle transform="rotate(-42.16 2245 483.4)" cx="2245" cy="483.4" r="62.44" fill="hsla(322.28661684742497, 70%, 80%, 0.2410726998936908)" filter="blur(44.80804718717836px)" opacity=".2411"/>
+ <rect transform="rotate(-31.95 2036 541.7)" x="1964" y="468.9" width="145.7" height="145.7" rx="36.43" fill="hsla(149.9541622934479, 70%, 80%, 0.2952578456118941)" filter="blur(18.21566252660668px)" opacity=".2953"/>
+ <ellipse transform="rotate(84.34 1745 563.4)" cx="1745" cy="563.4" rx="77.97" ry="38.98" fill="hsla(132.18122331636627, 70%, 80%, 0.27115091907752836)" filter="blur(42.459628919112866px)" opacity=".2712"/>
+ <rect transform="rotate(196.4 2809 237.3)" x="2794" y="221.8" width="30.94" height="30.94" rx="7.735" fill="hsla(220.53528048366863, 70%, 80%, 0.3427923533243924)" filter="blur(47.67172189988959px)" opacity=".3428"/>
+ <rect transform="rotate(76.76 1394 1529)" x="1352" y="1487" width="84.71" height="84.71" rx="21.18" fill="hsla(75.76937246482632, 70%, 80%, 0.30725821373952344)" filter="blur(17.669309011444838px)" opacity=".3073"/>
+ <rect transform="rotate(33.02 2608 231.8)" x="2561" y="184.4" width="94.64" height="94.64" rx="23.66" fill="hsla(317.8198434086098, 70%, 80%, 0.1056812678745494)" filter="blur(18.279017402858162px)" opacity=".1057"/>
+ <circle transform="rotate(57.52 996.9 1668)" cx="996.9" cy="1668" r="39.93" fill="hsla(234.2618033584066, 70%, 80%, 0.1476581930828504)" filter="blur(2.80519434807876px)" opacity=".1477"/>
+ <circle transform="rotate(160.3 2796 149.5)" cx="2796" cy="149.5" r="47.6" fill="hsla(70.27768098748017, 70%, 80%, 0.12963465602044316)" filter="blur(15.814580838107133px)" opacity=".1296"/>
+ <rect transform="rotate(23.44 967.9 1290)" x="939.3" y="1262" width="57.17" height="57.17" rx="14.29" fill="hsla(7.402363518076931, 70%, 80%, 0.3186473035080042)" filter="blur(15.189616906591846px)" opacity=".3186"/>
+ <rect transform="rotate(266.9 2524 1585)" x="2466" y="1526" width="116.5" height="116.5" rx="29.13" fill="hsla(277.31657849027783, 70%, 80%, 0.12860715195116018)" filter="blur(46.56990971957991px)" opacity=".1286"/>
+ <ellipse transform="rotate(73.9 1805 1076)" cx="1805" cy="1076" rx="115.9" ry="57.94" fill="hsla(120.4869393662977, 70%, 80%, 0.32719607215803603)" filter="blur(36.96698332361529px)" opacity=".3272"/>
+ <ellipse transform="rotate(229.8 1976 893.6)" cx="1976" cy="893.6" rx="103.8" ry="51.91" fill="hsla(217.33515391321365, 70%, 80%, 0.32489604470219025)" filter="blur(2.9005800701569937px)" opacity=".3249"/>
+ <circle transform="rotate(14.58 2758 806.3)" cx="2758" cy="806.3" r="65.72" fill="hsla(260.55370562222123, 70%, 80%, 0.2587883727133825)" filter="blur(40.361624939355664px)" opacity=".2588"/>
+ <ellipse transform="rotate(140.3 2707 1388)" cx="2707" cy="1388" rx="86.45" ry="43.23" fill="hsla(175.48656477725177, 70%, 80%, 0.15769291814190173)" filter="blur(14.352938689961025px)" opacity=".1577"/>
+ <circle transform="rotate(7.276 801.9 1124)" cx="801.9" cy="1124" r="21.41" fill="hsla(115.00779835937361, 70%, 80%, 0.25756834115851834)" filter="blur(22.924302514466454px)" opacity=".2576"/>
+ <ellipse transform="rotate(-69.68 566 452.5)" cx="566" cy="452.5" rx="112.6" ry="56.32" fill="hsla(137.94807627036442, 70%, 80%, 0.12124962235859735)" filter="blur(43.971039088992065px)" opacity=".1212"/>
+ <circle transform="rotate(-30.32 2643 1280)" cx="2643" cy="1280" r="42.43" fill="hsla(156.85140387053423, 70%, 80%, 0.3541951940032587)" filter="blur(43.966010815635734px)" opacity=".3542"/>
+ <circle transform="rotate(-48.41 702.3 860.6)" cx="702.3" cy="860.6" r="12.09" fill="hsla(277.7273171937587, 70%, 80%, 0.2576203127168407)" filter="blur(48.41896100730615px)" opacity=".2576"/>
+ <rect transform="rotate(197.7 2523 1665)" x="2468" y="1611" width="109.2" height="109.2" rx="27.29" fill="hsla(21.628468904765658, 70%, 80%, 0.25669572756149794)" filter="blur(40.48036843482311px)" opacity=".2567"/>
+ <ellipse transform="rotate(202.7 2218 641.6)" cx="2218" cy="641.6" rx="100.4" ry="50.22" fill="hsla(44.10270737006284, 70%, 80%, 0.10974952631816834)" filter="blur(15.153727745090034px)" opacity=".1097"/>
+ <ellipse transform="rotate(214.5 958.3 574.7)" cx="958.3" cy="574.7" rx="64.41" ry="32.21" fill="hsla(341.31771106039156, 70%, 80%, 0.1676344442860357)" filter="blur(34.06407485711915px)" opacity=".1676"/>
+ <ellipse transform="rotate(188.2 2461 185.7)" cx="2461" cy="185.7" rx="26.48" ry="13.24" fill="hsla(358.8664377630117, 70%, 80%, 0.18620119723571027)" filter="blur(13.630336243449515px)" opacity=".1862"/>
+ <rect transform="rotate(173.3 149.2 209.2)" x="96.92" y="156.9" width="104.7" height="104.7" rx="26.16" fill="hsla(110.62109110484491, 70%, 80%, 0.24938369681278974)" filter="blur(43.43753105139258px)" opacity=".2494"/>
+ <ellipse transform="rotate(-16.08 2481 596.2)" cx="2481" cy="596.2" rx="132.6" ry="66.32" fill="hsla(105.8576929562782, 70%, 80%, 0.3789033414761902)" filter="blur(48.083440497591454px)" opacity=".3789"/>
+ <ellipse transform="rotate(133.5 2734 1676)" cx="2734" cy="1676" rx="36.47" ry="18.24" fill="hsla(74.70546822045904, 70%, 80%, 0.26726750179103376)" filter="blur(6.38945761109278px)" opacity=".2673"/>
+ <ellipse transform="rotate(137.3 1147 1692)" cx="1147" cy="1692" rx="114.3" ry="57.14" fill="hsla(309.2732691656387, 70%, 80%, 0.1610354640843429)" filter="blur(49.31758573579343px)" opacity=".161"/>
+ <circle transform="rotate(65.8 1080 232.7)" cx="1080" cy="232.7" r="41.95" fill="hsla(0.9198612580835963, 70%, 80%, 0.28170518484511703)" filter="blur(1.5959645396311783px)" opacity=".2817"/>
+ <rect transform="rotate(150.9 2057 376.4)" x="2039" y="358.8" width="35.22" height="35.22" rx="8.804" fill="hsla(124.39975733667615, 70%, 80%, 0.20296912867155953)" filter="blur(26.50834104137143px)" opacity=".203"/>
+ <ellipse transform="rotate(-3.654 2044 849.6)" cx="2044" cy="849.6" rx="48.82" ry="24.41" fill="hsla(355.95717936494475, 70%, 80%, 0.1537879403091061)" filter="blur(44.33497946874824px)" opacity=".1538"/>
+ <rect transform="rotate(-4.431 222.2 1563)" x="155.5" y="1497" width="133.4" height="133.4" rx="33.36" fill="hsla(182.67230707500374, 70%, 80%, 0.17476086449959077)" filter="blur(3.627814113290251px)" opacity=".1748"/>
+ <circle transform="rotate(213.9 583.2 944.8)" cx="583.2" cy="944.8" r="68.19" fill="hsla(195.67914975888328, 70%, 80%, 0.2858802378470663)" filter="blur(38.11618423651639px)" opacity=".2859"/>
+ <rect transform="rotate(-35.58 1486 1343)" x="1449" y="1306" width="74.44" height="74.44" rx="18.61" fill="hsla(232.88140823819288, 70%, 80%, 0.37949536357708613)" filter="blur(35.61459526520224px)" opacity=".3795"/>
+ <rect transform="rotate(47.53 1860 340.5)" x="1801" y="282" width="117" height="117" rx="29.25" fill="hsla(150.68724013089673, 70%, 80%, 0.22643728419596865)" filter="blur(36.06862594238176px)" opacity=".2264"/>
+ <ellipse transform="rotate(114 2858 1741)" cx="2858" cy="1741" rx="150" ry="75" fill="hsla(212.84223383135256, 70%, 80%, 0.13851835080469704)" filter="blur(26.867866544467862px)" opacity=".1385"/>
+ <circle transform="rotate(86.96 945.8 650.5)" cx="945.8" cy="650.5" r="68.69" fill="hsla(202.15206129782274, 70%, 80%, 0.3598405211175908)" filter="blur(46.04478859242443px)" opacity=".3598"/>
+ <circle transform="rotate(-46.28 1863 1717)" cx="1863" cy="1717" r="22.74" fill="hsla(15.277689858629344, 70%, 80%, 0.32098306340518756)" filter="blur(14.180805763040722px)" opacity=".321"/>
+ <ellipse transform="rotate(266.9 802.7 1185)" cx="802.7" cy="1185" rx="72.42" ry="36.21" fill="hsla(161.97470074919812, 70%, 80%, 0.2910585468538744)" filter="blur(33.117857862490965px)" opacity=".2911"/>
+ <circle transform="rotate(10.4 209.7 472)" cx="209.7" cy="472" r="44.2" fill="hsla(3.890605375563303, 70%, 80%, 0.17904086314515916)" filter="blur(19.208034091456415px)" opacity=".179"/>
+ <circle transform="rotate(-43.25 2878 1449)" cx="2878" cy="1449" r="63.57" fill="hsla(175.9774055872395, 70%, 80%, 0.26655806466339427)" filter="blur(26.674839304470073px)" opacity=".2666"/>
+ <rect transform="rotate(39.49 1845 1399)" x="1802" y="1356" width="86.68" height="86.68" rx="21.67" fill="hsla(77.64713294524078, 70%, 80%, 0.2557948016661572)" filter="blur(11.727422813930371px)" opacity=".2558"/>
+ <ellipse transform="rotate(210.5 1041 1585)" cx="1041" cy="1585" rx="36.34" ry="18.17" fill="hsla(252.40724819837303, 70%, 80%, 0.10143572026233695)" filter="blur(41.14728280619137px)" opacity=".1014"/>
+ <rect transform="rotate(130.6 1914 1316)" x="1872" y="1274" width="83.74" height="83.74" rx="20.93" fill="hsla(176.74236462755488, 70%, 80%, 0.2510265935868336)" filter="blur(14.871267860536037px)" opacity=".251"/>
+ <rect transform="rotate(-52.5 719.9 644)" x="681.4" y="605.5" width="76.9" height="76.9" rx="19.22" fill="hsla(292.3859450907872, 70%, 80%, 0.18557084654944922)" filter="blur(42.367023955509175px)" opacity=".1856"/>
+ <circle transform="rotate(69.35 522.7 553.1)" cx="522.7" cy="553.1" r="62.85" fill="hsla(329.12395478696055, 70%, 80%, 0.3501538673592173)" filter="blur(40.87538635471181px)" opacity=".3502"/>
+ <circle transform="rotate(231.9 1633 1681)" cx="1633" cy="1681" r="26.87" fill="hsla(158.1649148451651, 70%, 80%, 0.21883192318745937)" filter="blur(25.767473563568593px)" opacity=".2188"/>
+ <circle transform="rotate(161.9 1831 308)" cx="1831" cy="308" r="30.49" fill="hsla(50.08651808969209, 70%, 80%, 0.2309813764649164)" filter="blur(9.420389578142425px)" opacity=".231"/>
+ <ellipse transform="rotate(155.1 367.2 756.3)" cx="367.2" cy="756.3" rx="73.07" ry="36.54" fill="hsla(246.7756557148204, 70%, 80%, 0.3284534159487873)" filter="blur(32.105293510892864px)" opacity=".3285"/>
+ <circle transform="rotate(83.02 2780 1788)" cx="2780" cy="1788" r="36.58" fill="hsla(254.71060977325072, 70%, 80%, 0.16203279909941828)" filter="blur(34.50305574324628px)" opacity=".162"/>
+ <rect transform="rotate(178.6 714.7 291.9)" x="686.9" y="264.1" width="55.55" height="55.55" rx="13.89" fill="hsla(332.39933408438293, 70%, 80%, 0.29023860313373595)" filter="blur(2.4266620409133965px)" opacity=".2902"/>
+ <ellipse transform="rotate(71.17 1431 1378)" cx="1431" cy="1378" rx="114.4" ry="57.2" fill="hsla(229.56397867859823, 70%, 80%, 0.2836996000471313)" filter="blur(37.45565437626152px)" opacity=".2837"/>
+ <ellipse transform="rotate(248.7 965.5 1090)" cx="965.5" cy="1090" rx="88.06" ry="44.03" fill="hsla(159.50672152191947, 70%, 80%, 0.3556391476953913)" filter="blur(20.698964705293587px)" opacity=".3556"/>
+ <circle transform="rotate(45.91 992.4 1671)" cx="992.4" cy="1671" r="26.29" fill="hsla(36.024722221698795, 70%, 80%, 0.19290291676642635)" filter="blur(30.144991590091486px)" opacity=".1929"/>
+ <rect transform="rotate(-28.43 2425 1520)" x="2393" y="1489" width="63.32" height="63.32" rx="15.83" fill="hsla(111.75384244440653, 70%, 80%, 0.23674967491324692)" filter="blur(11.177116662847004px)" opacity=".2367"/>
+ <ellipse transform="rotate(82.62 63.42 1338)" cx="63.42" cy="1338" rx="126.9" ry="63.44" fill="hsla(133.10081195592807, 70%, 80%, 0.10634204315356924)" filter="blur(42.321293163313165px)" opacity=".1063"/>
+ <ellipse transform="rotate(139.3 2288 1362)" cx="2288" cy="1362" rx="55.06" ry="27.53" fill="hsla(10.090163013174553, 70%, 80%, 0.39653068219851695)" filter="blur(7.02035913006096px)" opacity=".3965"/>
+ <circle transform="rotate(226 2256 1001)" cx="2256" cy="1001" r="47.54" fill="hsla(286.4653911523035, 70%, 80%, 0.1060276701344342)" filter="blur(1.1247740198481238px)" opacity=".106"/>
+ <circle transform="rotate(94.78 2502 741.6)" cx="2502" cy="741.6" r="30.54" fill="hsla(43.25612028511695, 70%, 80%, 0.3600614427390558)" filter="blur(3.187616560768891px)" opacity=".3601"/>
+ <ellipse transform="rotate(179.4 1976 1327)" cx="1976" cy="1327" rx="124.6" ry="62.32" fill="hsla(70.03818056315203, 70%, 80%, 0.14788177720786747)" filter="blur(36.2012728590894px)" opacity=".1479"/>
+ <rect transform="rotate(109.2 2219 546)" x="2162" y="488.7" width="114.5" height="114.5" rx="28.62" fill="hsla(53.51063388589501, 70%, 80%, 0.3174499708011362)" filter="blur(17.79531713184491px)" opacity=".3174"/>
+ <circle transform="rotate(163 155.3 66.44)" cx="155.3" cy="66.44" r="31.6" fill="hsla(358.0325017196368, 70%, 80%, 0.3193293730636161)" filter="blur(40.513270719139506px)" opacity=".3193"/>
+ <rect transform="rotate(-12.94 1434 1702)" x="1392" y="1659" width="85.87" height="85.87" rx="21.47" fill="hsla(243.675619539446, 70%, 80%, 0.2684762815714978)" filter="blur(28.701462902985565px)" opacity=".2685"/>
+ <ellipse transform="rotate(174.7 2141 693.3)" cx="2141" cy="693.3" rx="72.77" ry="36.38" fill="hsla(259.3868539726556, 70%, 80%, 0.17223974040790577)" filter="blur(36.15797637317553px)" opacity=".1722"/>
+ <ellipse transform="rotate(-7.207 611.4 1460)" cx="611.4" cy="1460" rx="126.8" ry="63.39" fill="hsla(141.89649316190855, 70%, 80%, 0.32594860209327037)" filter="blur(9.5716278272081px)" opacity=".3259"/>
+ <rect transform="rotate(-39.86 2762 1123)" x="2707" y="1068" width="110.2" height="110.2" rx="27.55" fill="hsla(354.12233366910567, 70%, 80%, 0.30899677567437256)" filter="blur(35.592359348554766px)" opacity=".309"/>
+ <rect transform="rotate(215.3 1108 166.1)" x="1037" y="94.37" width="143.5" height="143.5" rx="35.86" fill="hsla(190.46558058014054, 70%, 80%, 0.28367685613392035)" filter="blur(20.658322180171673px)" opacity=".2837"/>
+ <ellipse transform="rotate(-36.87 116.3 324.7)" cx="116.3" cy="324.7" rx="96.37" ry="48.18" fill="hsla(77.78538149194506, 70%, 80%, 0.24867793263773372)" filter="blur(29.313437286679537px)" opacity=".2487"/>
+ <ellipse transform="rotate(197.8 1682 35.98)" cx="1682" cy="35.98" rx="37.67" ry="18.84" fill="hsla(310.8423329968328, 70%, 80%, 0.10328659153313259)" filter="blur(19.596873126442016px)" opacity=".1033"/>
+ <circle transform="rotate(12.19 947.4 1535)" cx="947.4" cy="1535" r="42.41" fill="hsla(10.414086982519827, 70%, 80%, 0.24039263418658804)" filter="blur(2.7312911725125733px)" opacity=".2404"/>
+ <text x="50%" y="50%" dominant-baseline="middle" fill="#fafafa" filter="url(#shadow)" font-family="'Maple Mono CN', monospace" font-size="128" font-weight="bold" opacity=".9" text-anchor="middle"><tspan x="50%" dy="0">PageOS</tspan></text>
+</svg>

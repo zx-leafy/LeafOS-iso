@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 - 页面未找到</title>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8IS0tIOWkluahhuefqeW9oiAtLT4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHJ4PSIxMCIgcnk9IjEwIgogICAgZmlsbD0iIzQyNDI0MiIKICAgIHN0cm9rZT0iIzAwNjk1YyIKICAgIHN0cm9rZS13aWR0aD0iNCIvPgoKICA8IS0tIOW3puecvO+8muWwj+WchueCuSAtLT4KICA8Y2lyY2xlIGN4PSIxMiIgY3k9IjE0IiByPSIxLjUiIGZpbGw9IiNmNWY1ZjUiIC8+CgogIDwhLS0g5Y+z55y877ya5bCP5ZyG54K5IC0tPgogIDxjaXJjbGUgY3g9IjIwIiBjeT0iMTQiIHI9IjEuNSIgZmlsbD0iI2Y1ZjVmNSIgLz4KCiAgPCEtLSDpvLvlrZDvvJrnq5bnur8gLS0+CiAgPGxpbmUgeDE9IjE2IiB5MT0iMTYiIHgyPSIxNiIgeTI9IjE4IiBzdHJva2U9IiNmNWY1ZjUiIHN0cm9rZS13aWR0aD0iMS41IiAvPgoKICA8IS0tIOW+rueskeeahOWYtO+8muS4iuaJrOeahOW8p+e6vyAtLT4KICA8cGF0aCBkPSJNIDE0IDIwIFEgMTYgMjIgMTggMjAiIAogICAgICAgIGZpbGw9Im5vbmUiIAogICAgICAgIHN0cm9rZT0iI2Y1ZjVmNSIgCiAgICAgICAgc3Ryb2tlLXdpZHRoPSIxLjUiIAogICAgICAgIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz4KPC9zdmc+"
+    />
+    <style>
+      /* 全局样式 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+        color: var(--secondary-font-color);
+        transition: all 0.2s ease;
+      }
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+      body {
+        font-family: "Maple Mono CN", "Courier New", Courier, monospace;
+        background: #424242;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --danger-color: #ff6d00; /* 着重色：边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+        --focused-bg-color: rgba(255, 255, 255, 0.1);
+      }
+      .container {
+        padding: var(--margin-padding);
+        max-width: 600px;
+        text-align: center;
+      }
+      .error-code {
+        font-size: 4rem;
+        font-weight: bold;
+        color: var(--danger-color);
+        margin-bottom: 1rem;
+      }
+      .error-message {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+      }
+      .suggestions {
+        margin: 2rem 0;
+        text-align: left;
+      }
+      .suggestions-title {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+      .suggestion-list {
+        list-style: none;
+      }
+      .suggestion-item {
+        background: var(--secondary-bg-color);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--margin-padding);
+        padding: var(--margin-padding);
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+      }
+      .suggestion-item:hover {
+        border-color: var(--accent-color);
+        transform: scale(1.05);
+        box-shadow: var(--shadow);
+      }
+      .back-home {
+        display: inline-block;
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+        padding: var(--margin-padding) 1rem;
+        border: var(--border-thickness) solid var(--accent-color);
+        border-radius: var(--margin-padding);
+        font-weight: bold;
+        margin-top: 1rem;
+      }
+      .back-home:hover {
+        background: var(--accent-color);
+        color: var(--content-bg-color);
+        box-shadow: var(--shadow);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="error-code">404</div>
+      <div class="error-message">页面未找到</div>
+      <div id="suggestions" class="suggestions">
+        <div class="suggestions-title">您要找的可能是：</div>
+        <ul id="suggestion-list" class="suggestion-list"></ul>
+      </div>
+      <a href="/" class="back-home">返回首页</a>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const suggestionList = document.getElementById("suggestion-list");
+        const suggestionsContainer = document.getElementById("suggestions");
+        const currentPath = window.location.pathname;
+
+        // 加载已安装的应用包列表
+        async function loadPackages() {
+          try {
+            const response = await fetch("/index.json");
+            const data = await response.json();
+            return data.packages || [];
+          } catch (error) {
+            console.error("加载应用列表失败:", error);
+            return [];
+          }
+        }
+
+        // 分析路径并生成建议
+        function generateSuggestions(packages) {
+          const suggestions = [];
+          const pathSegments = currentPath
+            .split("/")
+            .filter((segment) => segment.length > 0);
+
+          // 如果路径为空，不生成建议
+          if (pathSegments.length === 0) {
+            return suggestions;
+          }
+
+          // 尝试匹配包ID
+          const lastSegment =
+            pathSegments[pathSegments.length - 1].toLowerCase();
+          const packageMatches = packages.filter((pkg) =>
+            pkg.id.toLowerCase().includes(lastSegment)
+          );
+
+          // 添加匹配的包
+          packageMatches.forEach((pkg) => {
+            suggestions.push({
+              text: `${pkg.name} (${pkg.id})`,
+              url: pkg.location,
+            });
+          });
+
+          // 如果没有找到匹配，尝试使用第一个路径段
+          if (suggestions.length === 0 && pathSegments.length > 0) {
+            const firstSegment = pathSegments[0].toLowerCase();
+            const firstSegmentMatches = packages.filter((pkg) =>
+              pkg.id.toLowerCase().includes(firstSegment)
+            );
+            firstSegmentMatches.forEach((pkg) => {
+              suggestions.push({
+                text: `${pkg.name} (${pkg.id})`,
+                url: pkg.location,
+              });
+            });
+          }
+
+          // 检查是否与包的入口文件匹配
+          const fullPagePath = window.location.pathname.toLowerCase();
+          let autoRedirectPackage = null;
+
+          packages.forEach((pkg) => {
+            // 构建可能的入口文件路径
+            const entryPath = `${pkg.location}/${pkg.id}.html`.toLowerCase();
+            const indexPath = `${pkg.location}/index.html`.toLowerCase();
+
+            // 如果路径与入口文件或索引文件匹配
+            if (fullPagePath === entryPath || fullPagePath === indexPath) {
+              // 检查是否已存在相同建议
+              const exists = suggestions.some((s) => s.url === pkg.location);
+              if (!exists) {
+                suggestions.unshift({
+                  text: `您要找的可能是 ${pkg.name} 应用入口`,
+                  url: pkg.location,
+                });
+              }
+            }
+
+            // 检查是否版本号不同但包ID相同
+            const versionPattern = /\/packages\/([^\/]+)\/([0-9.]+)\//;
+            const match = fullPagePath.match(versionPattern);
+            if (match) {
+              const packageId = match[1];
+              const version = match[2];
+              if (packageId === pkg.id && version !== pkg.latest_version) {
+                autoRedirectPackage = pkg;
+              }
+            }
+          });
+
+          // 如果找到需要自动跳转的包
+          if (autoRedirectPackage) {
+            const countdownElement = document.createElement("div");
+            countdownElement.id = "countdown";
+            countdownElement.style.marginTop = "1rem";
+            countdownElement.style.fontSize = "1.2rem";
+            countdownElement.style.color = "var(--danger-color)";
+            document.querySelector(".container").appendChild(countdownElement);
+
+            let countdown = 5;
+            countdownElement.textContent = `将在 ${countdown} 秒后跳转到最新版本 (${autoRedirectPackage.latest_version})...`;
+
+            const countdownInterval = setInterval(() => {
+              countdown--;
+              countdownElement.textContent = `将在 ${countdown} 秒后跳转到最新版本 (${autoRedirectPackage.latest_version})...`;
+
+              if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = "../../../" + autoRedirectPackage.location;
+              }
+            }, 1000);
+          }
+
+          return suggestions;
+        }
+
+        // 渲染建议列表
+        function renderSuggestions(suggestions) {
+          if (suggestions.length === 0) {
+            suggestionsContainer.style.display = "none";
+            return;
+          }
+
+          suggestionList.innerHTML = suggestions
+            .map(
+              (suggestion) => `
+              <li class="suggestion-item" onclick="window.location.href='${suggestion.url}'">
+                ${suggestion.text}
+              </li>
+            `
+            )
+            .join("");
+        }
+
+        // 主逻辑
+        const packages = await loadPackages();
+        const suggestions = generateSuggestions(packages);
+        renderSuggestions(suggestions);
+      });
+    </script>
+  </body>
+</html>
