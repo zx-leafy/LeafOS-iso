@@ -5,15 +5,7 @@ vt = 1
 
 # The default session, also known as the greeter.
 [default_session]
-command = '''
-bash -c "
-  mkdir -p /tmp/pageos-greet
-  export HOME=/tmp/pageos-greet
-  pageos-greet \\
-    --launch-command 'cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801' \\
-    --session-command 'pageos-core --command \"cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12800/exec.html?id=pageos-ui\"'
-"
-'''
+command = "/usr/local/bin/pageos-session pageos-ui"
 
 # The user to run the command as. The privileges this user must have depends
 # on the greeter. A graphical greeter may for example require the user to be
