@@ -142,7 +142,7 @@ wget
 mesa
 xf86-video-fbdev
 xf86-video-vesa
-#xf86-video-vmware(worked, disable because it turns to AUR package)
+#xf86-video-vmware(worked, disable for test)
 
 xf86-video-intel
 vulkan-intel
@@ -164,6 +164,7 @@ noto-fonts-cjk
 noto-fonts-emoji
 #ttf-tabler-icons(AUR, disable for test)
 ttf-font-awesome
+maplemono-nf-cn
 
 ## Look
 
