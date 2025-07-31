@@ -26,6 +26,7 @@ file_permissions=(
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/pageos-core"]="0:0:755"
   ["/usr/local/bin/pageos-greet"]="0:0:755"
+  ["/usr/local/bin/pageos-session"]="0:0:755"
   ["/usr/local/bin/pageos-pkgr"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
 )
