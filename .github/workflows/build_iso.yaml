@@ -62,4 +62,5 @@ jobs:
         with:
           name: pageos-iso
           path: target/*.iso
+          compression-level: 9 # maximum compression
           retention-days: 5

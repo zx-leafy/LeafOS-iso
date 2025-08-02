@@ -142,7 +142,7 @@ wget
 mesa
 xf86-video-fbdev
 xf86-video-vesa
-#xf86-video-vmware(worked, disable for test)
+xf86-video-vmware
 
 xf86-video-intel
 vulkan-intel

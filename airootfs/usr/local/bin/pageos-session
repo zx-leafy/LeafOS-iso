@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 mkdir -p /tmp/pageos-greet
-export HOME=/tmp/pageos-greet
+HOME=/tmp/pageos-greet
 pageos-greet \
-  --launch-command "cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801" \
-  --session-command "pageos-core --command \"cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12800/exec.html?id=$1\""
+  --launch-command="cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801" \
+  --session-command="pageos-exec $1"

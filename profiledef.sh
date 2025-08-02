@@ -25,6 +25,7 @@ file_permissions=(
   ["/etc/sudoers.d"]="0:0:750"
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/pageos-core"]="0:0:755"
+  ["/usr/local/bin/pageos-exec"]="0:0:755"
   ["/usr/local/bin/pageos-greet"]="0:0:755"
   ["/usr/local/bin/pageos-session"]="0:0:755"
   ["/usr/local/bin/pageos-pkgr"]="0:0:755"
