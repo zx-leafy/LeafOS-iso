@@ -142,7 +142,6 @@ wget
 mesa
 xf86-video-fbdev
 xf86-video-vesa
-xf86-video-vmware
 
 xf86-video-intel
 vulkan-intel
@@ -162,13 +161,13 @@ virtualbox-guest-utils
 
 noto-fonts-cjk
 noto-fonts-emoji
-#ttf-tabler-icons(AUR, disable for test)
+#ttf-tabler-icons(AUR, disable for testing)
 ttf-font-awesome
 maplemono-nf-cn
 
 ## Look
 
-#papirus-icon-theme(disable for test)
+#papirus-icon-theme(disable for testing)
 adwaita-cursors
 #mcmojave-cursors(AUR)
 
@@ -184,8 +183,8 @@ labwc
 mako
 cliphist
 swaybg
-#swayidle(disable for test)
-#swaylock(disable for test)
+#swayidle(disable for testing)
+#swaylock(disable for testing)
 
 waybar
 wofi
