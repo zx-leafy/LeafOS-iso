@@ -26,6 +26,15 @@
       "latest_version": "0.4.5",
       "description": "PageOS 的 HTML/CSS/JavaScript 用户界面实现",
       "location": "./packages/pageos-ui/0.4.5"
+    },
+    {
+      "id": "pageos-weather",
+      "name": "天气查询",
+      "icon": "favicon.svg",
+      "author": "PJ568",
+      "latest_version": "0.1.0",
+      "description": "通过 wttr.in 获取和解析天气数据并显示的网页应用",
+      "location": "./packages/pageos-weather/0.1.0"
     }
   ],
   "source": []

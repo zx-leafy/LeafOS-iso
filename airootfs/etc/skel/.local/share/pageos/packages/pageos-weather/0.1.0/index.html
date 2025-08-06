@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>天气查询</title>
+    <style>
+      /* 全局样式 - 从风格参考继承 */
+      * {
+        color: var(--secondary-font-color);
+        font-family: "Courier New", Courier, monospace;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+      }
+
+      ::selection {
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+      }
+
+      :root,
+      body {
+        height: 100%;
+        margin: 0;
+        background: var(--content-bg-color);
+        padding: var(--margin-padding);
+
+        --accent-color: #64ffda; /* 强调色：边框 */
+        --secondary-color: #00695c; /* 次要色：未激活边框 */
+        --accent-bg-color: #009688;
+        --secondary-bg-color: #616161;
+        --content-bg-color: #424242;
+        --accent-font-color: #f5f5f5;
+        --secondary-font-color: #eeeeee;
+
+        --margin-padding: 0.5rem;
+        --border-thickness: 0.2rem;
+        --border-radius: 0.5rem;
+        --shadow: 0.6rem 0.6rem 0.1rem 0.1rem rgba(0, 0, 0, 0.2);
+      }
+
+      body {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .search-box {
+        display: flex;
+        gap: 10px;
+      }
+
+      input {
+        padding: 8px;
+        flex-grow: 1;
+        background: var(--secondary-bg-color);
+        border: var(--border-thickness) solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        color: var(--secondary-font-color);
+        font-size: 1rem;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--accent-color);
+      }
+
+      button {
+        padding: 8px 16px;
+        background: var(--accent-bg-color);
+        color: var(--accent-font-color);
+        border: none;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .weather-info {
+        background: var(--secondary-bg-color);
+        border-radius: var(--border-radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+
+      .weather-detail {
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .weather-detail:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      h1,
+      h2 {
+        color: var(--accent-color);
+        border-bottom: var(--border-thickness) solid var(--accent-color);
+        padding-bottom: 0.3rem;
+      }
+
+      /* 翻译按钮相关 */
+      #translate {
+        position: relative;
+      }
+
+      .translateSelectLanguage {
+        background: inherit;
+        color: inherit;
+        opacity: 0;
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+    </style>
+    <script
+      src="https://lib.baomitu.com/translate.js/3.17.0/translate.js"
+      type="text/javascript"
+    ></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>天气查询</h1>
+      <div class="search-box">
+        <input type="text" id="cityInput" placeholder="输入城市名称" />
+        <button onclick="getWeather()">获取天气</button>
+        <button id="translate">语言</button>
+      </div>
+      <div id="weatherResult" class="weather-info">
+        <p>正在获取当前位置天气……</p>
+      </div>
+    </div>
+
+    <script>
+      // 页面加载时获取当前位置天气
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("https://wttr.in/?format=j1")
+          .then((response) => response.json())
+          .then((data) => {
+            updateWeatherUI(data);
+          })
+          .catch((error) => {
+            const resultDiv = document.getElementById("weatherResult");
+            resultDiv.innerHTML = `
+                <p>无法获取当前位置天气</p>
+                <p>请输入城市名称手动查询</p>
+              `;
+          });
+      });
+
+      function updateWeatherUI(data) {
+        const current = data.current_condition[0];
+        const area = data.nearest_area[0];
+
+        let html = `
+            <h2>${area.areaName[0].value}天气</h2>
+            <div class="weather-detail">
+              <strong>当前天气:</strong> ${current.weatherDesc[0].value}
+            </div>
+            <div class="weather-detail">
+              <strong>温度:</strong> ${current.temp_C}°C (体感 ${current.FeelsLikeC}°C)
+            </div>
+            <div class="weather-detail">
+              <strong>湿度:</strong> ${current.humidity}%
+            </div>
+            <div class="weather-detail">
+              <strong>风速:</strong> ${current.windspeedKmph} km/h (${current.winddir16Point})
+            </div>
+            <div class="weather-detail">
+              <strong>降水量:</strong> ${current.precipMM} mm
+            </div>
+            <div class="weather-detail">
+              <strong>能见度:</strong> ${current.visibility} km
+            </div>
+            <div class="weather-detail">
+              <strong>气压:</strong> ${current.pressure} hPa
+            </div>
+            <div class="weather-detail">
+              <strong>更新时间:</strong> ${current.observation_time}
+            </div>
+          `;
+        const res = document.getElementById("weatherResult");
+        res.innerHTML = html;
+        translate.execute([res]);
+        refreshTranslate();
+      }
+
+      function getWeather() {
+        const city = document.getElementById("cityInput").value.trim();
+        if (!city) {
+          alert("请输入城市名称");
+          return;
+        }
+
+        const resultDiv = document.getElementById("weatherResult");
+        resultDiv.innerHTML = "<p>加载中……</p>";
+
+        fetch(`https://wttr.in/${city}?format=j1`)
+          .then((response) => response.json())
+          .then((data) => {
+            updateWeatherUI(data);
+          })
+          .catch((error) => {
+            resultDiv.innerHTML = `<p>获取天气信息失败: ${error.message}</p>`;
+          });
+      }
+
+      // 加载 CSS
+      function loadCSS(url) {
+        return new Promise((resolve, reject) => {
+          //// 检查是否已加载
+          const existingLinks = document.querySelectorAll(
+            `link[href="${url}"]`
+          );
+          if (existingLinks.length > 0) {
+            return resolve(url);
+          }
+
+          //// 创建新的 link 元素
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.type = "text/css";
+          link.href = url;
+
+          //// 成功加载处理
+          link.onload = () => {
+            link.onload = null;
+            link.onerror = null;
+            resolve(url);
+          };
+
+          //// 加载失败处理
+          link.onerror = () => {
+            link.onerror = null;
+            link.onload = null;
+            document.head.removeChild(link);
+            reject(new Error(`无法加载 CSS 文件: ${url}`));
+          };
+
+          //// 添加到文档头部
+          document.head.appendChild(link);
+        });
+      }
+
+      // translate-js 翻译系统
+      //// 初始化翻译系统
+      function initTranslate() {
+        try {
+          translate.service.use("client.edge");
+          translate.request.listener.start();
+          translate.setAutoDiscriminateLocalLanguage();
+          translate.language.setUrlParamControl();
+          translate.language.translateLocal = true;
+          translate.ignore.class.push("notTranslate");
+          translate.execute();
+        } catch (e) {
+          console.error("翻译系统出错：" + e);
+        }
+      }
+
+      //// 刷新翻译
+      function refreshTranslate() {
+        try {
+          translate.selectLanguageTag.refreshRender();
+        } catch (e) {
+          console.error("刷新翻译出错：" + e);
+        }
+      }
+
+      // 初始化
+      function initialize() {
+        initTranslate(); //// 初始化页面翻译
+        loadCSS(
+          "https://chinese-fonts-cdn.deno.dev/packages/maple-mono-cn/dist/MapleMono-CN-Regular/result.css"
+        ); //// 加载字体 CSS
+      }
+
+      // 触发器
+      //// 网页加载完毕后触发初始化
+      window.addEventListener("DOMContentLoaded", () => initialize());
+    </script>
+  </body>
+</html>
