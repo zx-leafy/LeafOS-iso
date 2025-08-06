@@ -247,7 +247,32 @@
         placeholder="搜索应用程序……"
         id="searchInput"
       />
+      <a
+        href="exec.html?id=pageos-ui"
+        target="_blank"
+        class="top-buttons"
+        title="启动"
+      >
+        <!-- Copyright (c) 2018-2025 Tabler -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-power"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M7 6a7.75 7.75 0 1 0 10 0" />
+          <path d="M12 4l0 8" />
+        </svg>
+      </a>
       <a id="translate" class="top-buttons language-selector" title="语言">
+        <!-- Copyright (c) 2018-2025 Tabler -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -265,14 +290,16 @@
           <path d="M3.6 9h16.8" />
           <path d="M3.6 15h16.8" />
           <path d="M11.5 3a17 17 0 0 0 0 18" />
-          <path d="M12.5 3a17 17 0 0 1 0 18" /></svg
-      ></a>
+          <path d="M12.5 3a17 17 0 0 1 0 18" />
+        </svg>
+      </a>
       <a
         href="https://github.com/swaybien/pageos-apps"
         target="_blank"
         class="top-buttons"
         title="仓库"
       >
+        <!-- Copyright (c) 2018-2025 Tabler -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -294,8 +321,9 @@
           <path d="M11 7l-1.9 -1.9" />
           <path
             d="M13.446 2.6l7.955 7.954a2.045 2.045 0 0 1 0 2.892l-7.955 7.955a2.045 2.045 0 0 1 -2.892 0l-7.955 -7.955a2.045 2.045 0 0 1 0 -2.892l7.955 -7.955a2.045 2.045 0 0 1 2.892 0z"
-          /></svg
-      ></a>
+          />
+        </svg>
+      </a>
     </div>
     <div class="container">
       <div class="apps-grid" id="appsGrid">
@@ -677,7 +705,10 @@
           window.open(metadataUrl, "_blank");
         } else if (action === "cpcmd") {
           // 复制固定启动地址：复制和本页面同目录的 exec.html?id=“软件包 ID”
-          const execUrl = new URL(`exec.html?id=${target.dataset.metaId}`, window.location.href).href;
+          const execUrl = new URL(
+            `exec.html?id=${target.dataset.metaId}`,
+            window.location.href
+          ).href;
           navigator.clipboard.writeText(execUrl).catch((err) => {
             console.error("复制失败:", err);
           });
