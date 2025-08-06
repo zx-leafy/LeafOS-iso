@@ -43,6 +43,10 @@ echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 groupadd -f alpm
 usermod -aG alpm builder
 
+# 修复文件权限 | Fix file permissions
+recho "正在修复文件权限..." "Fixing file permissions..."
+chown -R builder:builder $REPO_DIR
+
 # 启用 multilib 仓库 | Enable multilib
 recho "正在启用 multilib 仓库..." "Enabling multilib repository..."
 printf '\n%s\n%s\n' '[multilib]' 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
@@ -55,13 +59,8 @@ pacman -Sy --noconfirm archiso reflector git base-devel sudo
 
 # 安装 aurutils | Install aurutils
 recho "正在安装 aurutils..." "Installing aurutils..."
-sudo -u builder git clone https://aur.archlinux.org/aurutils.git /home/builder/aurutils
-cd /home/builder/aurutils && cd $REPO_DIR
-sudo -u builder makepkg -si --noconfirm
-
-# 修复文件权限 | Fix file permissions
-recho "正在修复文件权限..." "Fixing file permissions..."
-chown -R builder:builder $REPO_DIR
+sudo -u builder git clone https://aur.archlinux.org/aurutils.git aurutils
+sudo -u builder makepkg -si --noconfirm -D aurutils
 
 # 完成提示 | Completion message
 recho "环境设置完成！" "Environment setup completed!"
