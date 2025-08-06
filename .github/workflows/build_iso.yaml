@@ -2,6 +2,11 @@ name: Build PageOS ISO
 
 on:
   workflow_dispatch:
+    inputs:
+      name:
+        description: "OS name"
+        required: false
+        default: "pageos"
 
 concurrency:
   group: "测试"
@@ -15,52 +20,21 @@ jobs:
       options: --privileged
 
     steps:
-      - name: Setup system
-        run: |
-          # 安装sudo
-          pacman -Syu --noconfirm --needed sudo
-          # 初始化 pacman
-          pacman-key --init
-          pacman-key --populate archlinux
-          # 创建 builder 用户和组
-          useradd -m -s /bin/bash builder
-          echo 'builder ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-          groupadd -f alpm
-          usermod -aG alpm builder
-          # 启用 multilib 仓库
-          printf '\n%s\n%s\n' '[multilib]' 'Include = /etc/pacman.d/mirrorlist' >> /etc/pacman.conf
-          grep -A1 "\[multilib\]" /etc/pacman.conf
-          pacman -Syy --noconfirm --needed zellij|| true
-
-      - name: Install dependencies
-        run: |
-          # 安装基础依赖
-          pacman -Sy --noconfirm archiso reflector git base-devel sudo
-
-          # 安装 aurutils
-          sudo -u builder git clone https://aur.archlinux.org/aurutils.git /home/builder/aurutils
-          cd /home/builder/aurutils
-          sudo -u builder makepkg -si --noconfirm
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           repository: swaybien/pageos
 
-      - name: Make build script executable
-        run: chmod +x build.bash
+      - name: Setup actions environment
+        run: ./scripts/gh_acions_setup.bash
 
       - name: Run build script
-        run: |
-          # 修复文件权限
-          chown -R builder:builder .
-          # 执行构建
-          sudo -u builder ./build.bash --noconfirm
+        run: sudo -u builder ./build.bash --noconfirm
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pageos-iso
+          name: ${{ github.event.inputs.name || 'pageos' }}
           path: target/*.iso
           compression-level: 9 # maximum compression
           retention-days: 5

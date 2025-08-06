@@ -61,7 +61,7 @@ handle_error() {
 trap 'handle_error ${LINENO} "$BASH_COMMAND"' ERR
 
 # 语言检测 | Language detection
-if [ $(echo ${LANG/_/-} | grep -Ei "\\b(zh|cn)\\b") ]; then CURRENT_LANG=1;  fi
+if [ $(echo ${LANG/_/-} | grep -Ei "\\b(zh|cn)\\b") ]; then CURRENT_LANG=1; fi
 
 # 创建 pacman.conf 文件 | Create pacman.conf file
 create_pacman_conf() {
