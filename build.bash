@@ -40,12 +40,12 @@ set -euo pipefail
 
 # 本地化 | Localization
 recho() {
-  if [ $CURRENT_LANG == 1 ]; then
+  if [ "$CURRENT_LANG" == "1" ]; then
     ## zh-Hans-CN
-    echo $1;
+    echo "$1";
   else
     ## en-US
-    echo $2;
+    echo "$2";
   fi
 }
 
