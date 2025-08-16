@@ -2,6 +2,14 @@
 
 mkdir -p /tmp/pageos-greet
 HOME=/tmp/pageos-greet
-pageos-greet \
-  --launch-command="cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801" \
-  --session-command="pageos-exec $1"
+
+if [ -n "$2" ]; then
+  pageos-greet \
+    --launch-command="cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801" \
+    --session-command="pageos-exec $1" \
+    --page "$2"
+else
+  pageos-greet \
+    --launch-command="cage -s -- firefox --kiosk --no-remote http://127.0.0.1:12801" \
+    --session-command="pageos-exec $1"
+fi

@@ -3,7 +3,7 @@
 
 iso_name="pageos"
 iso_label="PAGEOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
-iso_publisher="PageOS <https://pageos.js.org>"
+iso_publisher="PageOS <https://github.com/swaybien/pageos>"
 iso_application="PageOS Live/Rescue DVD"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="arch"
