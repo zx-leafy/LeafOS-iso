@@ -78,6 +78,16 @@ fi
 # 如果用户界面 ID 不为 pageos-ui 或登录页面路径不为空，替换 airootfs/etc/greetd/config.toml 中 pageos-session 的参数 | If the user interface ID is not pageos-ui or the login page path is not empty, replace the parameter pageos-session in airootfs/etc/greetd/config.toml
 if [ "$UI_ID" != "pageos-ui" ] || [ -n "$LOGIN_PATH" ]; then
   CONFIG_FILE="$REPO_DIR/airootfs/etc/greetd/config.toml"
+  # airootfs/usr/local/bin/pageos-pkgr repo install --repo airootfs/etc/skel/.local/share/pageos $UI_ID
+  if [ -n "$UI_ID" ] && [ "$UI_ID" != "pageos-ui" ]; then
+    recho "正在安装用户界面: $UI_ID" "Installing user interface: $UI_ID"
+    "$REPO_DIR/airootfs/usr/local/bin/pageos-pkgr" repo update --repo "$REPO_DIR/airootfs/etc/skel/.local/share/pageos"
+    "$REPO_DIR/airootfs/usr/local/bin/pageos-pkgr" repo install --repo "$REPO_DIR/airootfs/etc/skel/.local/share/pageos" "$UI_ID"
+    if [ $? -ne 0 ]; then
+      recho "错误: 无法安装用户界面 $UI_ID" "Error: Failed to install user interface $UI_ID"
+      exit 1
+    fi
+  fi
   
   # 检查配置文件是否存在 | Check if the configuration file exists
   if [ ! -f "$CONFIG_FILE" ]; then
@@ -86,13 +96,13 @@ if [ "$UI_ID" != "pageos-ui" ] || [ -n "$LOGIN_PATH" ]; then
   fi
   
   # 检查配置文件中是否存在要替换的行 | Check if the line to be replaced exists in the configuration file
-  if ! grep -q 'command = "pageos-session pageos-ui"' "$CONFIG_FILE"; then
+  if ! grep -q 'command = "pageos-session .*"' "$CONFIG_FILE"; then
     recho "错误: 配置文件中未找到要替换的命令行" "Error: Command line to replace not found in config file"
     exit 1
   fi
   
   # 替换配置文件中的命令 | Replace the command in the configuration file
-  sed -i "s|command = \"pageos-session pageos-ui\"|command = \"pageos-session $UI_ID $LOGIN_PATH\"|" "$CONFIG_FILE"
+  sed -i "s|command = \"pageos-session .*\"|command = \"pageos-session $UI_ID $LOGIN_PATH\"|" "$CONFIG_FILE"
   if [ $? -ne 0 ]; then
     recho "错误: 无法更新配置文件" "Error: Failed to update config file"
     exit 1
@@ -112,13 +122,13 @@ if [ -n "$SYS_NAME" ] && [ "$SYS_NAME" != "pageos" ]; then
   fi
   
   # 检查配置文件中是否存在要替换的行 | Check if the line to be replaced exists in the configuration file
-  if ! grep -q 'iso_name="pageos"' "$PROFILEDEF_FILE"; then
+  if ! grep -q 'iso_name="[^"]*"' "$PROFILEDEF_FILE"; then
     recho "错误: 配置文件中未找到要替换的 iso_name 行" "Error: iso_name line to replace not found in config file"
     exit 1
   fi
   
   # 替换配置文件中的 iso_name | Replace the iso_name in the configuration file
-  sed -i "s|iso_name=\"pageos\"|iso_name=\"$SYS_NAME\"|" "$PROFILEDEF_FILE"
+  sed -i "s|iso_name=\"[^\"]*\"|iso_name=\"$SYS_NAME\"|" "$PROFILEDEF_FILE"
   if [ $? -ne 0 ]; then
     recho "错误: 无法更新配置文件" "Error: Failed to update config file"
     exit 1
