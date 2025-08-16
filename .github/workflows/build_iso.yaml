@@ -6,11 +6,15 @@ on:
       name:
         description: "OS name"
         required: false
-        default: "pageos"
-
-concurrency:
-  group: "测试"
-  cancel-in-progress: true
+        default: ""
+      custom-ui-id:
+        description: "The ID of the UI package to use"
+        required: false
+        default: ""
+      custom-login-html-url:
+        description: "OS name"
+        required: false
+        default: ""
 
 jobs:
   build-iso:
@@ -28,13 +32,8 @@ jobs:
       - name: Setup actions environment
         run: ./scripts/gh_acions_setup.bash
 
+      - name: Rebrand
+        run: ./scripts/rebrand.bash "${{ github.event.inputs.custom-ui-id }}" "${{ github.event.inputs.custom-login-html-url }}" "${{ github.event.inputs.name }}"
+
       - name: Run build script
         run: sudo -u builder ./build.bash --noconfirm
-
-      - name: Upload ISO artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.inputs.name || 'pageos' }}
-          path: target/*.iso
-          compression-level: 9 # maximum compression
-          retention-days: 5
