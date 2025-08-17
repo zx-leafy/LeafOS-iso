@@ -25,6 +25,66 @@ recho() {
   fi
 }
 
+# 验证系统名称是否符合 Linux 用户名格式 | Validate system name conforms to Linux username format
+validate_sys_name() {
+  local name="$1"
+  
+  # 检查是否为空 | Check if empty
+  if [ -z "$name" ]; then
+    recho "错误: 系统名称不能为空" "Error: System name cannot be empty"
+    return 1
+  fi
+  
+  # 检查长度 (1-32 字符) | Check length (1-32 characters)
+  if [ ${#name} -lt 1 ] || [ ${#name} -gt 32 ]; then
+    recho "错误: 系统名称长度必须在 1-32 个字符之间" "Error: System name must be between 1-32 characters"
+    return 1
+  fi
+  
+  # 检查是否以字母开头 | Check if starts with a letter
+  if ! [[ "$name" =~ ^[a-zA-Z] ]]; then
+    recho "错误: 系统名称必须以字母开头" "Error: System name must start with a letter"
+    return 1
+  fi
+  
+  # 检查是否只包含字母、数字、下划线和连字符 | Check if contains only letters, numbers, underscores and hyphens
+  if ! [[ "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+    recho "错误: 系统名称只能包含字母、数字、下划线和连字符" "Error: System name can only contain letters, numbers, underscores and hyphens"
+    return 1
+  fi
+  
+  # 检查是否以连字符结尾 | Check if ends with a hyphen
+  if [[ "$name" =~ -$ ]]; then
+    recho "错误: 系统名称不能以连字符结尾" "Error: System name cannot end with a hyphen"
+    return 1
+  fi
+  
+  # 检查是否全部是数字 | Check if all numbers
+  if [[ "$name" =~ ^[0-9]+$ ]]; then
+    recho "错误: 系统名称不能全部是数字" "Error: System name cannot be all numbers"
+    return 1
+  fi
+  
+  # 检查是否包含大写字母，并给出建议 | Check if contains uppercase letters and give suggestion
+  if [[ "$name" =~ [A-Z] ]]; then
+    local lowercase_name=$(echo "$name" | tr '[:upper:]' '[:lower:]')
+    recho "警告: 系统名称包含大写字母。虽然 Linux 支持大写字母用户名，但建议使用小写字母以获得更好的兼容性。" "Warning: System name contains uppercase letters. While Linux supports uppercase usernames, it's recommended to use lowercase for better compatibility."
+    recho "建议: 考虑使用 '$lowercase_name' 替代 '$name'" "Suggestion: Consider using '$lowercase_name' instead of '$name'"
+    # 不直接返回错误，只给出警告
+  fi
+  
+  # 检查是否是保留的用户名 | Check if it's a reserved username
+  local reserved_names=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "systemd-timesync" "messagebus" "syslog" "_apt" "tss" "uuidd" "tcpdump" "avahi-autoipd" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq" "avahi" "kernoops" "saned" "pulse" "rdma" "sshd" "polkitd" "colord" "geoclue" "Debian-exim" "systemd-coredump" "lightdm" "speech-dispatcher")
+  for reserved in "${reserved_names[@]}"; do
+    if [ "$name" = "$reserved" ]; then
+      recho "错误: '$name' 是系统保留的用户名" "Error: '$name' is a reserved system username"
+      return 1
+    fi
+  done
+  
+  return 0
+}
+
 # 语言检测 | Language detection
 if [ $(echo ${LANG/_/-} | grep -Ei "\\b(zh|cn)\\b") ]; then CURRENT_LANG=1; fi
 
@@ -109,6 +169,14 @@ if [ "$UI_ID" != "pageos-ui" ] || [ -n "$LOGIN_PATH" ]; then
   fi
   
   recho "已将用户界面 ID 设置为: $UI_ID" "User interface ID has been set to: $UI_ID"
+fi
+
+# 如果系统名称不为空且不等于 pageos，验证其格式 | If the system name is not empty and not equal to pageos, validate its format
+if [ -n "$SYS_NAME" ] && [ "$SYS_NAME" != "pageos" ]; then
+  # 验证系统名称格式 | Validate system name format
+  if ! validate_sys_name "$SYS_NAME"; then
+    exit 1
+  fi
 fi
 
 # 如果系统名称不为空，替换 profiledef.sh 中的 iso_name | If the system name is not empty, replace iso_name in profiledef.sh
