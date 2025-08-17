@@ -18,10 +18,10 @@ SYS_NAME=$3
 recho() {
   if [ "$CURRENT_LANG" == "1" ]; then
     ## zh-Hans-CN
-    echo "$1";
+    echo -e "$1";
   else
     ## en-US
-    echo "$2";
+    echo -e "$2";
   fi
 }
 
@@ -135,4 +135,84 @@ if [ -n "$SYS_NAME" ] && [ "$SYS_NAME" != "pageos" ]; then
   fi
   
   recho "已将 ISO 名称设置为: $SYS_NAME" "ISO name has been set to: $SYS_NAME"
+fi
+
+# 如果系统名称不为空，替换系统文件中的用户名 | If the system name is not empty, replace the username in system files
+if [ -n "$SYS_NAME" ] && [ "$SYS_NAME" != "pageos" ]; then
+  # 定义需要替换的文件列表 | Define the list of files to be replaced
+  PASSWD_FILE="$REPO_DIR/airootfs/etc/passwd"
+  GSHADOW_FILE="$REPO_DIR/airootfs/etc/gshadow"
+  HOSTNAME_FILE="$REPO_DIR/airootfs/etc/hostname"
+  SHADOW_FILE="$REPO_DIR/airootfs/etc/shadow"
+  GROUP_FILE="$REPO_DIR/airootfs/etc/group"
+  
+  # 替换 passwd 文件中的用户名和主目录 | Replace username and home directory in passwd file
+  if [ -f "$PASSWD_FILE" ]; then
+    recho "正在替换 $PASSWD_FILE 中的用户名" "Replacing username in $PASSWD_FILE"
+    # 替换用户名和主目录中的 pageos
+    sed -i "s|^pageos:x:1000:1000::/home/pageos:|$SYS_NAME:x:1000:1000::/home/$SYS_NAME:|" "$PASSWD_FILE"
+    if [ $? -eq 0 ]; then
+      recho "已成功替换 $PASSWD_FILE 中的用户名" "Successfully replaced username in $PASSWD_FILE"
+    else
+      recho "错误: 无法替换 $PASSWD_FILE 中的用户名" "Error: Failed to replace username in $PASSWD_FILE"
+    fi
+  else
+    recho "错误: 文件不存在: $PASSWD_FILE" "Error: File does not exist: $PASSWD_FILE"
+  fi
+  
+  # 替换 gshadow 文件中的用户名 | Replace username in gshadow file
+  if [ -f "$GSHADOW_FILE" ]; then
+    recho "正在替换 $GSHADOW_FILE 中的用户名" "Replacing username in $GSHADOW_FILE"
+    sed -i "s|^pageos:!*::|$SYS_NAME:!*::|" "$GSHADOW_FILE"
+    if [ $? -eq 0 ]; then
+      recho "已成功替换 $GSHADOW_FILE 中的用户名" "Successfully replaced username in $GSHADOW_FILE"
+    else
+      recho "错误: 无法替换 $GSHADOW_FILE 中的用户名" "Error: Failed to replace username in $GSHADOW_FILE"
+    fi
+  else
+    recho "错误: 文件不存在: $GSHADOW_FILE" "Error: File does not exist: $GSHADOW_FILE"
+  fi
+  
+  # 替换 hostname 文件中的主机名 | Replace hostname in hostname file
+  if [ -f "$HOSTNAME_FILE" ]; then
+    recho "正在替换 $HOSTNAME_FILE 中的主机名" "Replacing hostname in $HOSTNAME_FILE"
+    sed -i "s|^pageos$|$SYS_NAME|" "$HOSTNAME_FILE"
+    if [ $? -eq 0 ]; then
+      recho "已成功替换 $HOSTNAME_FILE 中的主机名" "Successfully replaced hostname in $HOSTNAME_FILE"
+    else
+      recho "错误: 无法替换 $HOSTNAME_FILE 中的主机名" "Error: Failed to replace hostname in $HOSTNAME_FILE"
+    fi
+  else
+    recho "错误: 文件不存在: $HOSTNAME_FILE" "Error: File does not exist: $HOSTNAME_FILE"
+  fi
+  
+  # 替换 shadow 文件中的用户名 | Replace username in shadow file
+  if [ -f "$SHADOW_FILE" ]; then
+    recho "正在替换 $SHADOW_FILE 中的用户名" "Replacing username in $SHADOW_FILE"
+    sed -i "s|^pageos:|$SYS_NAME:|" "$SHADOW_FILE"
+    if [ $? -eq 0 ]; then
+      recho "已成功替换 $SHADOW_FILE 中的用户名" "Successfully replaced username in $SHADOW_FILE"
+    else
+      recho "错误: 无法替换 $SHADOW_FILE 中的用户名" "Error: Failed to replace username in $SHADOW_FILE"
+    fi
+  else
+    recho "错误: 文件不存在: $SHADOW_FILE" "Error: File does not exist: $SHADOW_FILE"
+  fi
+  
+  # 替换 group 文件中的用户名 | Replace username in group file
+  if [ -f "$GROUP_FILE" ]; then
+    recho "正在替换 $GROUP_FILE 中的用户名" "Replacing username in $GROUP_FILE"
+    # 替换组名和组成员中的 pageos
+    sed -i "s|:pageos|:$SYS_NAME|g" "$GROUP_FILE"
+    sed -i "s|^pageos:x:1000:|$SYS_NAME:x:1000:|" "$GROUP_FILE"
+    if [ $? -eq 0 ]; then
+      recho "已成功替换 $GROUP_FILE 中的用户名" "Successfully replaced username in $GROUP_FILE"
+    else
+      recho "错误: 无法替换 $GROUP_FILE 中的用户名" "Error: Failed to replace username in $GROUP_FILE"
+    fi
+  else
+    recho "错误: 文件不存在: $GROUP_FILE" "Error: File does not exist: $GROUP_FILE"
+  fi
+  
+  recho "已将系统文件中的用户名替换为: $SYS_NAME" "Username in system files has been replaced with: $SYS_NAME"
 fi
