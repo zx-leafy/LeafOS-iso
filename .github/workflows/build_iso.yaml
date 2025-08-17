@@ -12,7 +12,7 @@ on:
         required: false
         default: ""
       custom-login-html-url:
-        description: "OS name"
+        description: "Direct link to a custom login HTML file"
         required: false
         default: ""
 
@@ -37,3 +37,11 @@ jobs:
 
       - name: Run build script
         run: sudo -u builder ./build.bash --noconfirm
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.inputs.name || 'pageos' }}
+          path: target/*.iso
+          compression-level: 9 # maximum compression
+          retention-days: 5

@@ -67,7 +67,7 @@ if [ -n "$LOGIN_URL" ]; then
   fi
   
   recho "已下载登录页面: $LOGIN_URL" "Downloaded login page: $LOGIN_URL"
-  LOGIN_PATH="/usr/local/lib/pageos-greet/login-page.html"
+  LOGIN_PATH=" /usr/local/lib/pageos-greet/login-page.html"
 fi
 
 # 如果用户界面 ID 为空，则设为 pageos-ui | If the user interface ID is empty, set it to pageos-ui
@@ -102,7 +102,7 @@ if [ "$UI_ID" != "pageos-ui" ] || [ -n "$LOGIN_PATH" ]; then
   fi
   
   # 替换配置文件中的命令 | Replace the command in the configuration file
-  sed -i "s|command = \"pageos-session .*\"|command = \"pageos-session $UI_ID $LOGIN_PATH\"|" "$CONFIG_FILE"
+  sed -i "s|command = \"pageos-session .*\"|command = \"pageos-session $UI_ID$LOGIN_PATH\"|" "$CONFIG_FILE"
   if [ $? -ne 0 ]; then
     recho "错误: 无法更新配置文件" "Error: Failed to update config file"
     exit 1

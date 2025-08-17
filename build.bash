@@ -27,7 +27,7 @@ PACMAN_CONF=$BUILD_DIR/pacman.conf
 ## mirrorlist 文件 | Mirrorlist file
 MIRRORLIST=$BUILD_DIR/mirrorlist
 ## 当前语言 | Current language
-CURRENT_LANG=0 # 0: en-US, 1: zh-Hans-CN
+CURRENT_LANG=0 ### 0: en-US, 1: zh-Hans-CN
 ## 是否自动选择 | Auto select
 NO_CONFIRM=0
 ## 使用默认源 | Use default source
@@ -42,10 +42,10 @@ set -euo pipefail
 recho() {
   if [ "$CURRENT_LANG" == "1" ]; then
     ## zh-Hans-CN
-    echo "$1";
+    echo -e "$1";
   else
     ## en-US
-    echo "$2";
+    echo -e "$2";
   fi
 }
 
@@ -67,109 +67,23 @@ if [ $(echo ${LANG/_/-} | grep -Ei "\\b(zh|cn)\\b") ]; then CURRENT_LANG=1; fi
 create_pacman_conf() {
   if [[ ! -f "$PROGRESS_FILE" ]] || [[ ! -f "$PACMAN_CONF" ]] || ! grep -q "1 创建 pacman.conf 文件" "$PROGRESS_FILE"; then
     cat << EOF > "$PACMAN_CONF"
-#
-# /etc/pacman.conf
-#
-# See the pacman.conf(5) manpage for option and repository directives
-
-#
-# GENERAL OPTIONS
-#
 [options]
-# The following paths are commented out with their default values listed.
-# If you wish to use different paths, uncomment and update the paths.
-#RootDir     = /
-#DBPath      = /var/lib/pacman/
-#CacheDir    = /var/cache/pacman/pkg/
-#LogFile     = /var/log/pacman.log
-#GPGDir      = /etc/pacman.d/gnupg/
-#HookDir     = /etc/pacman.d/hooks/
 HoldPkg     = pacman glibc
-#XferCommand = /usr/bin/curl -L -C - -f -o %o %u
-#XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
-#CleanMethod = KeepInstalled
 Architecture = auto
 
-# Pacman won't upgrade packages listed in IgnorePkg and members of IgnoreGroup
-#IgnorePkg   =
-#IgnoreGroup =
-
-#NoUpgrade   =
-#NoExtract   =
-
-# Misc options
-#UseSyslog
-#Color
-#NoProgressBar
-# We cannot check disk space from within a chroot environment
-#CheckSpace
-#VerbosePkgLists
 ParallelDownloads = 5
-#DownloadUser = alpm
-#DisableSandbox
 
-# By default, pacman accepts packages signed by keys that its local keyring
-# trusts (see pacman-key and its man page), as well as unsigned packages.
 SigLevel    = Required DatabaseOptional
 LocalFileSigLevel = Optional
-#RemoteFileSigLevel = Required
-
-# NOTE: You must run \`pacman-key --init\` before first using pacman; the local
-# keyring can then be populated with the keys of all official Arch Linux
-# packagers with \`pacman-key --populate archlinux\`.
-
-#
-# REPOSITORIES
-#   - can be defined here or included from another file
-#   - pacman will search repositories in the order defined here
-#   - local/custom mirrors can be added here or in separate files
-#   - repositories listed first will take precedence when packages
-#     have identical names, regardless of version number
-#   - URLs will have \$repo replaced by the name of the current repo
-#   - URLs will have \$arch replaced by the name of the architecture
-#
-# Repository entries are of the format:
-#       [repo-name]
-#       Server = ServerName
-#       Include = IncludePath
-#
-# The header [repo-name] is crucial - it must be present and
-# uncommented to enable the repo.
-#
-
-# The testing repositories are disabled by default. To enable, uncomment the
-# repo name header and Include lines. You can add preferred servers immediately
-# after the header, and they will be used before the default mirrors.
-
-#[core-testing]
-#Include = $MIRRORLIST
 
 [core]
 Include = $MIRRORLIST
 
-#[extra-testing]
-#Include = $MIRRORLIST
-
 [extra]
 Include = $MIRRORLIST
 
-# If you want to run 32 bit applications on your x86_64 system,
-# enable the multilib repositories as required here.
-
-#[multilib-testing]
-#Include = $MIRRORLIST
-
 [multilib]
 Include = $MIRRORLIST
-
-# An example of a custom package repository.  See the pacman manpage for
-# tips on creating your own repositories.
-#[custom]
-#SigLevel = Optional TrustAll
-#Server = file:///home/custompkgs
-
-# [chaotic-aur]
-# Include = /etc/pacman.d/chaotic-mirrorlist
 
 [archlinuxcn]
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch
@@ -265,6 +179,9 @@ for i in $@; do
   elif [ "$i" == "--help" -o "$i" == "-h" ]; then
     recho "本脚本用于构建 PageOS 的镜像文件。" "This script is used to build PageOS's image file."
     recho "用法：$0 [--noconfirm] [--no-mirror-check] [--help]" "Usage: $0 [--noconfirm] [--no-mirror-check] [--help]"
+    recho "  --noconfirm: 自动确认所有提示" "  --noconfirm: Automatically confirm all prompts"
+    recho "  --no-mirror-check: 跳过镜像源更新" "  --no-mirror-check: Skip mirrorlist update"
+    recho "  --help, -h: 显示此帮助信息" "  --help, -h: Show this help message"
     exit 0
   else
     INVALID_INPUT+="$i "
