@@ -143,6 +143,7 @@ if [ "$UI_ID" != "pageos-ui" ] || [ -n "$LOGIN_PATH" ]; then
     recho "正在安装用户界面: $UI_ID" "Installing user interface: $UI_ID"
     "$REPO_DIR/airootfs/usr/local/bin/pageos-pkgr" repo update --repo "$REPO_DIR/airootfs/etc/skel/.local/share/pageos"
     "$REPO_DIR/airootfs/usr/local/bin/pageos-pkgr" repo install --repo "$REPO_DIR/airootfs/etc/skel/.local/share/pageos" "$UI_ID"
+    "$REPO_DIR/airootfs/usr/local/bin/pageos-pkgr" repo clean --repo "$REPO_DIR/airootfs/etc/skel/.local/share/pageos"
     if [ $? -ne 0 ]; then
       recho "错误: 无法安装用户界面 $UI_ID" "Error: Failed to install user interface $UI_ID"
       exit 1
